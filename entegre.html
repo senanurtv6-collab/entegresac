@@ -359,7 +359,7 @@ function showDetail(uniqueId) {
     alert(`📄 EVRAK DETAYI\n\nSAC: ${item._sac}\nSıra No: ${item._siraNo}\nGrup: ${item["Grup"]}\nOluşturan: ${item["Olusturan"]}\nTarih: ${item["Kayıt Tarihi"]}\nExcel Durumu: ${item._excel ? '✅ AKTARILDI' : '⏳ BEKLİYOR'}\n\n📦 Toplam Miktar: ${toplamM.toFixed(2)}\n⚖️ Toplam Kg: ${toplamKg.toFixed(2)}`);
 }
 
-// EXCEL'E AKTAR VE KALICI İŞARETLE
+// EXCEL'E AKTAR VE KALICI İŞARETLE (DÜZELTİLMİŞ SAYI FORMATI)
 async function excelAktarVeIsaretle() {
     if (selectedIds.size === 0) {
         showToast("❌ Lütfen evrak seçin!", true);
@@ -381,18 +381,39 @@ async function excelAktarVeIsaretle() {
     
     console.log("Seçilenler:", secilenBySac);
     
-    // Excel oluştur
-    let excel = `<html><head><meta charset="UTF-8"><style>th{background:#2c3e50;color:white;padding:8px}</style></head><body>
+    // Excel oluştur (SAYI FORMATLI)
+    let excel = `<html><head><meta charset="UTF-8">
+    <style>
+        th { background: #2c3e50; color: white; padding: 10px; }
+        td { padding: 8px; border: 1px solid #ddd; }
+        .sayi { text-align: right; mso-number-format: '0.00'; }
+        .sayi4 { text-align: right; mso-number-format: '0.0000'; }
+    </style>
+    </head><body>
         <h2>SAC ENTEGRE RAPORU</h2>
         <p>Tarih: ${new Date().toLocaleString('tr-TR')}</p>
         <p>Kullanıcı: ${currentUser}</p>
-        <table border="1"><thead><tr><th>SAC</th><th>Sıra No</th><th>Grup</th><th>Oluşturan</th><th>Tarih</th><th>Stok Kodu</th><th>Miktar</th><th>Kg</th></tr></thead><tbody>`;
+        <p>Toplam Evrak: ${selectedIds.size}</p>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>SAC</th><th>Sıra No</th><th>Grup</th><th>Oluşturan</th>
+                    <th>Kayıt Tarihi</th><th>Stok Kodu</th><th>Stok İsmi</th>
+                    <th>Miktar</th><th>1 Plaka (kg)</th><th>Toplam Kg</th><th>Açıklama</th>
+                </tr>
+            </thead>
+            <tbody>`;
     
     for (let [sac, siraList] of Object.entries(secilenBySac)) {
         for (let sira of siraList) {
             const item = allData.find(i => i._sacKey === sac && i._siraNo === sira);
-            if (item) {
-                for (let k of (item.Kalemler || [])) {
+            if (item && item.Kalemler) {
+                for (let k of item.Kalemler) {
+                    // Sayısal değerleri formatla
+                    let miktar = parseFloat(k["Miktar"]) || 0;
+                    let plaka = parseFloat(k["1 Plaka (kg)"]) || 0;
+                    let toplamKg = parseFloat(k["Toplam Kg"]) || 0;
+                    
                     excel += `<tr>
                         <td>${item._sac}</td>
                         <td>${sira}</td>
@@ -400,15 +421,18 @@ async function excelAktarVeIsaretle() {
                         <td>${item["Olusturan"] || ''}</td>
                         <td>${item["Kayıt Tarihi"] || ''}</td>
                         <td>${k["Stok Kodu"] || ''}</td>
-                        <td>${k["Miktar"] || 0}</td>
-                        <td>${k["Toplam Kg"] || 0}</td>
+                        <td style="text-align:left">${k["Stok İsmi"] || ''}</td>
+                        <td class="sayi">${miktar.toFixed(2)}</td>
+                        <td class="sayi4">${plaka.toFixed(4)}</td>
+                        <td class="sayi">${toplamKg.toFixed(2)}</td>
+                        <td>${k["Açıklama"] || ''}</td>
                     </tr>`;
                 }
             }
         }
     }
     
-    excel += `</tbody>:</body></html>`;
+    excel += `</tbody></div></body></html>`;
     
     const blob = new Blob([excel], { type: 'application/vnd.ms-excel' });
     const link = document.createElement('a');
@@ -642,6 +666,7 @@ window.showDetail = showDetail;
 console.log("✅ SİSTEM HAZIR!");
 console.log("📌 Excel aktarılan evraklar KALICI olarak işaretlenir!");
 console.log("📌 Admin kullanıcılar 'Excel İşaretini Kaldır' butonunu görebilir!");
+console.log("📌 Excel çıktısında sayılar sağa hizalı ve sayı formatında!");
 console.log("📌 Otomatik yenileme 30 saniyede bir çalışır!");
 console.log("📌 'Şimdi Yenile' butonu ile manuel yenileyebilirsiniz!");
 </script>
