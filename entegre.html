@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>SAC ENTEGRE - SON</title>
+    <title>SAC ENTEGRE - KESİN ÇÖZÜM</title>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <style>
@@ -40,7 +40,6 @@
         .spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 10px; vertical-align: middle; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .status-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 10px; }
-        .auto-refresh { display: flex; align-items: center; gap: 10px; background: #e8f4f8; padding: 5px 15px; border-radius: 20px; }
     </style>
 </head>
 <body>
@@ -71,11 +70,7 @@
                 <button class="sac-tab" data-sac="sac3">🟢 SAC3</button>
                 <button class="sac-tab" data-sac="sac4">🟣 SAC4</button>
             </div>
-            <div class="auto-refresh">
-                <span>🔄 Otomatik Yenileme:</span>
-                <button class="btn btn-secondary btn-sm" id="autoRefreshBtn" style="padding:4px 12px">AÇIK</button>
-                <button class="btn btn-info btn-sm" id="manualRefreshBtn" style="padding:4px 12px">Şimdi Yenile</button>
-            </div>
+            <button class="btn btn-info" id="manualRefreshBtn" style="padding:4px 12px">🔄 Şimdi Yenile</button>
         </div>
         
         <div class="filtre-satir">
@@ -138,13 +133,11 @@ let displayData = [];
 let selectedIds = new Set();
 let currentPage = 1;
 let pageSize = 20;
-let autoRefreshInterval = null;
-let isAutoRefreshOn = true;
 
 let firebaseApps = {};
 let firebaseDBs = {};
 
-// FIREBASE BAŞLAT (HER SAC İÇİN AYRI APP)
+// FIREBASE BAŞLAT
 function initFirebase() {
     for (let [name, config] of Object.entries(SAC_CONFIGS)) {
         try {
@@ -173,7 +166,7 @@ function showToast(msg, isErr = false) {
     setTimeout(() => t.remove(), 3000);
 }
 
-// TÜM VERİLERİ YÜKLE
+// TÜM VERİLERİ YÜKLE (HER SAC İÇİN AYRI AKTARILANLAR LİSTESİ)
 async function loadAllData() {
     console.log("📥 Veriler yükleniyor...");
     document.getElementById("tabloContainer").innerHTML = '<div class="loading"><div class="spinner"></div> Veriler yükleniyor...</div>';
@@ -186,11 +179,13 @@ async function loadAllData() {
             const data = snapshot.val();
             
             if (data && data.gecmisVeriler) {
+                // HER SAC İÇİN KENDİ aktarilanEvraklar LİSTESİNİ AL
                 const aktarilanlar = data.aktarilanEvraklar || [];
                 console.log(`📁 ${sacName.toUpperCase()}: ${data.gecmisVeriler.length} kayıt, Excel aktarılan: ${aktarilanlar.length} -> [${aktarilanlar.join(', ')}]`);
                 
                 for (let item of data.gecmisVeriler) {
                     const siraNo = item["Sıra No"];
+                    // KRİTİK: Sadece sıra numarası değil, SAC + sıra numarası birlikte kontrol et
                     const isExcel = aktarilanlar.includes(siraNo);
                     
                     yeniData.push({
@@ -199,7 +194,7 @@ async function loadAllData() {
                         _sacKey: sacName,
                         _siraNo: siraNo,
                         _excel: isExcel,
-                        _uniqueId: `${sacName}_${siraNo}`
+                        _uniqueId: `${sacName}_${siraNo}`  // Benzersiz ID: sac1_1, sac2_1, etc.
                     });
                 }
             }
@@ -210,7 +205,8 @@ async function loadAllData() {
     
     allData = yeniData;
     const excelCount = allData.filter(d => d._excel).length;
-    console.log(`✅ TOPLAM: ${allData.length} kayıt, Excel aktarılan: ${excelCount}`);
+    console.log(`✅ TOPLAM: ${allData.length} kayıt`);
+    console.log(`✅ Excel aktarılan (SAC+Sıra bazlı):`, allData.filter(d => d._excel).map(d => d._uniqueId));
     
     document.getElementById("sonGuncelleme").innerHTML = `🕐 Son güncelleme: ${new Date().toLocaleTimeString('tr-TR')}`;
     
@@ -352,13 +348,15 @@ async function excelAktarVeIsaretle() {
         return;
     }
     
-    // Seçilenleri grupla
+    // Seçilenleri grupla (SAC bazında)
     let secilenBySac = {};
     for (let id of selectedIds) {
         let [sac, sira] = id.split("_");
         if (!secilenBySac[sac]) secilenBySac[sac] = [];
         secilenBySac[sac].push(parseInt(sira));
     }
+    
+    console.log("Seçilenler:", secilenBySac);
     
     // Excel oluştur
     let excel = `<html><head><meta charset="UTF-8"><style>th{background:#2c3e50;color:white;padding:8px}</style></head><body>
@@ -396,7 +394,7 @@ async function excelAktarVeIsaretle() {
     link.click();
     URL.revokeObjectURL(link.href);
     
-    // FIREBASE'E KAYDET
+    // FIREBASE'E KAYDET (HER SAC İÇİN KENDİ LİSTESİNE)
     let toplamIsaretlenen = 0;
     
     for (let [sac, siraList] of Object.entries(secilenBySac)) {
@@ -482,31 +480,6 @@ function changeSac(sac) {
     filterData();
 }
 
-// OTOMATİK YENİLEME
-function startAutoRefresh() {
-    if (autoRefreshInterval) clearInterval(autoRefreshInterval);
-    autoRefreshInterval = setInterval(() => {
-        if (isAutoRefreshOn) {
-            console.log("🔄 Otomatik yenileme çalışıyor...");
-            loadAllData();
-        }
-    }, 30000); // 30 saniyede bir yenile
-}
-
-function toggleAutoRefresh() {
-    isAutoRefreshOn = !isAutoRefreshOn;
-    const btn = document.getElementById("autoRefreshBtn");
-    if (isAutoRefreshOn) {
-        btn.textContent = "AÇIK";
-        btn.style.background = "#27ae60";
-        showToast("Otomatik yenileme AÇIK (30 saniyede bir)");
-    } else {
-        btn.textContent = "KAPALI";
-        btn.style.background = "#7f8c8d";
-        showToast("Otomatik yenileme KAPALI");
-    }
-}
-
 // EVENTLER
 document.getElementById("girisBtn").onclick = () => {
     const user = document.getElementById("username").value.trim();
@@ -518,7 +491,6 @@ document.getElementById("girisBtn").onclick = () => {
         document.getElementById("currentUser").innerHTML = user;
         initFirebase();
         loadAllData();
-        startAutoRefresh();
     } else {
         document.getElementById("hata").style.display = "block";
         setTimeout(() => document.getElementById("hata").style.display = "none", 2000);
@@ -526,7 +498,6 @@ document.getElementById("girisBtn").onclick = () => {
 };
 
 document.getElementById("cikisBtn").onclick = () => {
-    if (autoRefreshInterval) clearInterval(autoRefreshInterval);
     document.getElementById("mainPage").style.display = "none";
     document.getElementById("loginPage").style.display = "flex";
     selectedIds.clear();
@@ -536,7 +507,6 @@ document.getElementById("manualRefreshBtn").onclick = () => {
     showToast("🔄 Veriler yenileniyor...");
     loadAllData();
 };
-document.getElementById("autoRefreshBtn").onclick = () => toggleAutoRefresh();
 document.getElementById("filtreBtn").onclick = () => filterData();
 document.getElementById("temizleBtn").onclick = () => {
     document.getElementById("filtre_seri").value = "";
@@ -566,9 +536,8 @@ window.goPage = goPage;
 window.showDetail = showDetail;
 
 console.log("✅ SİSTEM HAZIR!");
-console.log("📌 Excel aktarılan evraklar KALICI olarak işaretlenir!");
-console.log("📌 Otomatik yenileme 30 saniyede bir çalışır!");
-console.log("📌 'Şimdi Yenile' butonu ile manuel yenileyebilirsiniz!");
+console.log("📌 Excel aktarılan evraklar SAC bazında KALICI olarak işaretlenir!");
+console.log("📌 Aynı sıra numarası farklı SAC'lerde olsa bile karışmaz!");
 </script>
 </body>
 </html>
