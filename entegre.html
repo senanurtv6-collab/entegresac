@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>SAC ENTEGRE - SON</title>
+    <title>SAC ENTEGRE - KİLİTLİ SİSTEM</title>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <style>
@@ -17,7 +17,7 @@
         .btn-warning { background: #f39c12; color: white; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-        th { background: #2c3e50; color: white; }
+        th { background: #2c3e50; color: white; position: sticky; top: 0; }
         .excel-aktarilmis { background-color: #c8e6c9 !important; }
         .excel-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
         .excel-badge.aktarildi { background: #2e7d32; color: white; }
@@ -26,8 +26,8 @@
         .sac-tab.active { background: #2196f3; color: white; }
         .filtre-satir { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; padding: 15px; background: #f5f5f5; border-radius: 8px; align-items: flex-end; }
         .filtre-satir input, .filtre-satir select { padding: 8px; border: 1px solid #ddd; border-radius: 4px; min-width: 120px; }
-        .pagination { display: flex; gap: 5px; justify-content: center; margin-top: 20px; }
-        .pagination button { padding: 5px 10px; cursor: pointer; }
+        .pagination { display: flex; gap: 5px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+        .pagination button { padding: 5px 10px; cursor: pointer; border: 1px solid #ddd; background: white; border-radius: 4px; }
         .toast { position: fixed; bottom: 20px; right: 20px; background: #333; color: white; padding: 10px 20px; border-radius: 8px; z-index: 9999; animation: fadeOut 3s; }
         @keyframes fadeOut { 0% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; } }
         .user-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px; background: #e8f4f8; border-radius: 8px; }
@@ -40,15 +40,17 @@
         .spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 10px; vertical-align: middle; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .status-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 10px; }
-        .auto-refresh-badge { background: #e8f4f8; padding: 5px 12px; border-radius: 20px; font-size: 12px; }
+        .checkbox-col { width: 40px; }
+        .admin-badge { background: #8e44ad; color: white; padding: 3px 10px; border-radius: 20px; font-size: 11px; margin-left: 8px; }
+        .locked-badge { background: #ff9800; color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; margin-left: 5px; }
     </style>
 </head>
 <body>
 
 <div id="loginPage" style="display:flex; justify-content:center; align-items:center; height:100vh">
     <div class="login-container">
-        <h2 style="color:white">🔄 SAC ENTEGRE</h2>
-        <p style="color:#90a4ae; text-align:center; margin-bottom:15px;">Tüm Kesim Takip Sistemi</p>
+        <h2 style="color:white">🔒 SAC ENTEGRE</h2>
+        <p style="color:#90a4ae; text-align:center; margin-bottom:15px;">Kilitli Sistem - Kalıcı İşaretleme</p>
         <input type="text" id="username" placeholder="Kullanıcı Adı">
         <input type="password" id="password" placeholder="Şifre">
         <button class="login-btn" id="girisBtn">GİRİŞ YAP</button>
@@ -59,7 +61,7 @@
 <div id="mainPage" style="display:none">
     <div class="container">
         <div class="user-info">
-            <span>👤 <span id="currentUser"></span></span>
+            <span>👤 <span id="currentUser"></span> <span id="userRolBadge"></span> <span class="locked-badge">🔒 Kilitli Sistem</span></span>
             <button class="btn btn-danger" id="cikisBtn">Çıkış</button>
         </div>
         
@@ -71,10 +73,7 @@
                 <button class="sac-tab" data-sac="sac3">🟢 SAC3</button>
                 <button class="sac-tab" data-sac="sac4">🟣 SAC4</button>
             </div>
-            <div class="auto-refresh-badge">
-                🔄 <span id="refreshStatus">Otomatik yenileme: 30 saniye</span>
-                <button class="btn btn-info btn-sm" id="manualRefreshBtn" style="padding:4px 12px; margin-left:10px">Şimdi Yenile</button>
-            </div>
+            <button class="btn btn-info" id="manualRefreshBtn" style="padding:4px 12px">🔄 Yenile</button>
         </div>
         
         <div class="filtre-satir">
@@ -92,7 +91,7 @@
         </div>
         
         <div style="margin:15px 0; display:flex; gap:10px; flex-wrap:wrap; align-items:center">
-            <button class="btn btn-success" id="excelBtn">📎 Seçilenleri Excel'e Aktar ve KALICI İşaretle</button>
+            <button class="btn btn-success" id="excelBtn">🔒 Seçilenleri Excel'e Aktar ve KİLİTLE</button>
             <button class="btn btn-secondary" id="tumunuSecBtn">☑️ Tümünü Seç</button>
             <button class="btn btn-secondary" id="secimiTemizleBtn">⬜ Seçimi Temizle</button>
             <span class="secili-info">✅ <span id="seciliSayi">0</span> seçili</span>
@@ -119,8 +118,8 @@
 </div>
 
 <script>
-// TÜM SAC FIREBASE KONFIGLERİ
-const SAC_CONFIGS = {
+// FIREBASE KONFIG
+const FIREBASE_CONFIGS = {
     sac1: { apiKey: "AIzaSyDDFOpgvi0r3YHsZvYV6JgdCrZp1QZazPY", databaseURL: "https://sac1-kesim-default-rtdb.europe-west1.firebasedatabase.app" },
     sac2: { apiKey: "AIzaSyDTYnX6lNtrMOr5CJ98MTPrKp6vwR2JeZM", databaseURL: "https://sac2-kesim-default-rtdb.europe-west1.firebasedatabase.app" },
     sac3: { apiKey: "AIzaSyDHxIkQgAnazAVkNngUsSaII3Ij7DIvj9s", databaseURL: "https://sac3-kesim-default-rtdb.europe-west1.firebasedatabase.app" },
@@ -136,13 +135,12 @@ let displayData = [];
 let selectedIds = new Set();
 let currentPage = 1;
 let pageSize = 20;
-let refreshInterval = null;
 
-let firebaseDBs = {};
+let databases = {};
 
 // FIREBASE BAŞLAT
 function initFirebase() {
-    for (let [name, config] of Object.entries(SAC_CONFIGS)) {
+    for (let [name, config] of Object.entries(FIREBASE_CONFIGS)) {
         try {
             let appName = `app_${name}`;
             let app;
@@ -153,7 +151,7 @@ function initFirebase() {
                     projectId: name + "-kesim"
                 }, appName);
             }
-            firebaseDBs[name] = firebase.database(app);
+            databases[name] = firebase.database(app);
             console.log(`✅ ${name.toUpperCase()} bağlandı`);
         } catch(e) { console.error(name, e); }
     }
@@ -168,32 +166,36 @@ function showToast(msg, isErr = false) {
     setTimeout(() => t.remove(), 3000);
 }
 
-// TÜM VERİLERİ YÜKLE
+function isAdmin() { return currentUser === "Muhammed" || currentUser === "Burak"; }
+
+// ==================== KRİTİK: VERİ YÜKLEME ====================
 async function loadAllData() {
     console.log("📥 Veriler yükleniyor...");
     document.getElementById("tabloContainer").innerHTML = '<div class="loading"><div class="spinner"></div> Veriler yükleniyor...</div>';
     
     let yeniData = [];
     
-    for (let [sacName, db] of Object.entries(firebaseDBs)) {
+    for (let [sacName, db] of Object.entries(databases)) {
         try {
             const snapshot = await db.ref(`${sacName}Kesim/`).once('value');
             const data = snapshot.val();
             
             if (data && data.gecmisVeriler) {
-                const aktarilanlar = data.aktarilanEvraklar || [];
-                console.log(`📁 ${sacName.toUpperCase()}: ${data.gecmisVeriler.length} kayıt, Excel aktarılan: ${aktarilanlar.length} -> [${aktarilanlar.join(', ')}]`);
+                // KRİTİK: excelKilitli listesini al
+                const kilitliListe = data.excelKilitli || [];
+                console.log(`📁 ${sacName.toUpperCase()}: ${data.gecmisVeriler.length} kayıt, Kilitli: [${kilitliListe.join(', ')}]`);
                 
                 for (let item of data.gecmisVeriler) {
                     const siraNo = item["Sıra No"];
-                    const isExcel = aktarilanlar.includes(siraNo);
+                    // Kilitli mi kontrol et
+                    const isKilitli = kilitliListe.includes(siraNo);
                     
                     yeniData.push({
                         ...item,
                         _sac: sacName.toUpperCase(),
                         _sacKey: sacName,
                         _siraNo: siraNo,
-                        _excel: isExcel,
+                        _excel: isKilitli,  // Kilitli ise Excel aktarılmış demek
                         _uniqueId: `${sacName}_${siraNo}`
                     });
                 }
@@ -205,7 +207,7 @@ async function loadAllData() {
     
     allData = yeniData;
     const excelCount = allData.filter(d => d._excel).length;
-    console.log(`✅ TOPLAM: ${allData.length} kayıt, Excel aktarılan: ${excelCount}`);
+    console.log(`✅ TOPLAM: ${allData.length} kayıt, KİLİTLİ: ${excelCount}`);
     
     document.getElementById("sonGuncelleme").innerHTML = `🕐 Son güncelleme: ${new Date().toLocaleTimeString('tr-TR')}`;
     
@@ -247,7 +249,7 @@ function renderTable() {
     const pageData = displayData.slice(start, start + pageSize);
     const excelCount = displayData.filter(i => i._excel).length;
     
-    document.getElementById("kayitSayisi").innerHTML = `📊 Toplam: ${displayData.length} evrak (${excelCount} Excel aktarılmış) | Sayfa ${currentPage}/${totalPages || 1}`;
+    document.getElementById("kayitSayisi").innerHTML = `📊 Toplam: ${displayData.length} evrak (🔒 ${excelCount} kilitli) | Sayfa ${currentPage}/${totalPages || 1}`;
     document.getElementById("seciliSayi").innerHTML = selectedIds.size;
     
     if (displayData.length === 0) {
@@ -270,16 +272,16 @@ function renderTable() {
         const isChecked = selectedIds.has(item._uniqueId);
         const rowClass = item._excel ? 'excel-aktarilmis' : '';
         const status = item._excel ? 
-            '<span class="excel-badge aktarildi">✅ AKTARILDI</span>' : 
-            '<span class="excel-badge aktarilmadi">⏳ BEKLİYOR</span>';
+            '<span class="excel-badge aktarildi">🔒 KİLİTLİ (Excel Aktarıldı)</span>' : 
+            '<span class="excel-badge aktarilmadi">⏳ AÇIK</span>';
         
         let sacIcon = item._sac === 'SAC1' ? '🔵' : (item._sac === 'SAC2' ? '🟠' : (item._sac === 'SAC3' ? '🟢' : '🟣'));
         
         html += `<tr class="${rowClass}">
-            <td style="text-align:center"><input type="checkbox" class="itemCheck" data-id="${item._uniqueId}" ${isChecked ? 'checked' : ''}></td>
+            <td style="text-align:center"><input type="checkbox" class="itemCheck" data-id="${item._uniqueId}" ${isChecked ? 'checked' : ''} ${item._excel ? 'disabled' : ''}></td>
             <td style="text-align:center">${sacIcon} ${item._sac}</td>
             <td style="text-align:center">${item["Seri No"] || '-'}</td>
-            <td style="text-align:center"><strong>${item._siraNo}</strong></td>
+            <td style="text-align:center"><strong>${item._siraNo}</strong> ${item._excel ? '🔒' : ''}</td>
             <td style="text-align:center">${item["Grup"] || '-'}</td>
             <td style="text-align:center">${item["Olusturan"] || '-'}</td>
             <td style="text-align:center">${item["Kayıt Tarihi"] || '-'}</td>
@@ -302,24 +304,29 @@ function renderTable() {
     }
     document.getElementById("pagination").innerHTML = pagHtml;
     
-    // Select All
+    // Select All (sadece kilitli olmayanlar)
     const selectAll = document.getElementById("selectAllCheck");
     if (selectAll) {
         selectAll.onclick = (e) => {
             for (let item of pageData) {
-                if (e.target.checked) selectedIds.add(item._uniqueId);
-                else selectedIds.delete(item._uniqueId);
+                if (!item._excel) {  // Sadece kilitli OLMAYANLAR seçilebilir
+                    if (e.target.checked) selectedIds.add(item._uniqueId);
+                    else selectedIds.delete(item._uniqueId);
+                }
             }
             renderTable();
         };
     }
     
-    // Tekli seçim
+    // Tekli seçim (sadece kilitli olmayanlar)
     for (let cb of document.querySelectorAll('.itemCheck')) {
         cb.onclick = (e) => {
             const id = cb.dataset.id;
-            if (cb.checked) selectedIds.add(id);
-            else selectedIds.delete(id);
+            if (cb.checked && !cb.disabled) {
+                selectedIds.add(id);
+            } else {
+                selectedIds.delete(id);
+            }
             document.getElementById("seciliSayi").innerHTML = selectedIds.size;
         };
     }
@@ -337,13 +344,13 @@ function showDetail(uniqueId) {
         toplamKg += parseFloat(k["Toplam Kg"]) || 0;
     }
     
-    alert(`📄 EVRAK DETAYI\n\nSAC: ${item._sac}\nSıra No: ${item._siraNo}\nGrup: ${item["Grup"]}\nOluşturan: ${item["Olusturan"]}\nTarih: ${item["Kayıt Tarihi"]}\nExcel Durumu: ${item._excel ? '✅ AKTARILDI' : '⏳ BEKLİYOR'}\n\n📦 Toplam Miktar: ${toplamM.toFixed(2)}\n⚖️ Toplam Kg: ${toplamKg.toFixed(2)}`);
+    alert(`📄 EVRAK DETAYI\n\nSAC: ${item._sac}\nSıra No: ${item._siraNo}\nGrup: ${item["Grup"]}\nOluşturan: ${item["Olusturan"]}\nTarih: ${item["Kayıt Tarihi"]}\nDurum: ${item._excel ? '🔒 KİLİTLİ (Excel Aktarıldı)' : '⏳ AÇIK'}\n\n📦 Toplam Miktar: ${toplamM.toFixed(2)}\n⚖️ Toplam Kg: ${toplamKg.toFixed(2)}`);
 }
 
-// EXCEL'E AKTAR VE KALICI İŞARETLE
-async function excelAktarVeIsaretle() {
+// ==================== EXCEL'E AKTAR VE KİLİTLE (KESİN ÇÖZÜM) ====================
+async function excelAktarVeKilit() {
     if (selectedIds.size === 0) {
-        showToast("❌ Lütfen evrak seçin!", true);
+        showToast("❌ Lütfen kilitlenecek evrak seçin!", true);
         return;
     }
     
@@ -355,21 +362,23 @@ async function excelAktarVeIsaretle() {
         secilenBySac[sac].push(parseInt(sira));
     }
     
-    console.log("Seçilenler:", secilenBySac);
+    console.log("🔒 Kilitlenecekler:", secilenBySac);
+    showToast(`🔒 ${selectedIds.size} evrak kilitleniyor...`);
     
-    // Excel oluştur
+    // 1. Excel dosyasını oluştur
     let excel = `<html><head><meta charset="UTF-8"><style>th{background:#2c3e50;color:white;padding:8px}</style></head><body>
-        <h2>SAC ENTEGRE RAPORU</h2>
+        <h2>SAC ENTEGRE RAPORU - KİLİTLİ EVRAKLAR</h2>
         <p>Tarih: ${new Date().toLocaleString('tr-TR')}</p>
         <p>Kullanıcı: ${currentUser}</p>
+        <p>Toplam Kilitli Evrak: ${selectedIds.size}</p>
         <table border="1"><thead><tr><th>SAC</th><th>Sıra No</th><th>Grup</th><th>Oluşturan</th><th>Tarih</th><th>Stok Kodu</th><th>Miktar</th><th>Kg</th></tr></thead><tbody>`;
     
     for (let [sac, siraList] of Object.entries(secilenBySac)) {
         for (let sira of siraList) {
             const item = allData.find(i => i._sacKey === sac && i._siraNo === sira);
-            if (item) {
-                for (let k of (item.Kalemler || [])) {
-                    excel += `<table>
+            if (item && item.Kalemler) {
+                for (let k of item.Kalemler) {
+                    excel += `<tr>
                         <td>${item._sac}</td>
                         <td>${sira}</td>
                         <td>${item["Grup"] || ''}</td>
@@ -389,32 +398,48 @@ async function excelAktarVeIsaretle() {
     const blob = new Blob([excel], { type: 'application/vnd.ms-excel' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `SAC_Rapor_${Date.now()}.xls`;
+    link.download = `SAC_Kilitli_Rapor_${Date.now()}.xls`;
     link.click();
     URL.revokeObjectURL(link.href);
     
-    // FIREBASE'E KAYDET
-    let toplamIsaretlenen = 0;
+    // 2. Firebase'e KİLİT olarak kaydet (excelKilitli listesine ekle)
+    let basariliSayi = 0;
     
     for (let [sac, siraList] of Object.entries(secilenBySac)) {
-        const db = firebaseDBs[sac];
+        const db = databases[sac];
         if (db) {
-            const snap = await db.ref(`${sac}Kesim/aktarilanEvraklar`).once('value');
-            let mevcut = snap.val() || [];
-            let yeniListe = [...new Set([...mevcut, ...siraList])];
-            await db.ref(`${sac}Kesim/aktarilanEvraklar`).set(yeniListe);
-            console.log(`📝 ${sac.toUpperCase()}: Aktarılanlar güncellendi -> [${yeniListe.join(', ')}]`);
-            
-            for (let item of allData) {
-                if (item._sacKey === sac && siraList.includes(item._siraNo)) {
-                    item._excel = true;
-                    toplamIsaretlenen++;
+            try {
+                // Mevcut kilitli listeyi al
+                const snap = await db.ref(`${sac}Kesim/excelKilitli`).once('value');
+                let mevcut = snap.val() || [];
+                
+                // Yeni listeyi oluştur (tekrar eden olmasın)
+                let yeniListe = [...new Set([...mevcut, ...siraList])];
+                
+                // Firebase'e kaydet
+                await db.ref(`${sac}Kesim/excelKilitli`).set(yeniListe);
+                console.log(`🔒 ${sac} kilitlendi:`, yeniListe);
+                basariliSayi += siraList.length;
+                
+                // Yerel veriyi güncelle
+                for (let item of allData) {
+                    if (item._sacKey === sac && siraList.includes(item._siraNo)) {
+                        item._excel = true;
+                    }
                 }
+            } catch(e) {
+                console.error(`❌ ${sac} kilitlenemedi:`, e);
+                showToast(`${sac} kilitlenemedi!`, true);
             }
         }
     }
     
-    showToast(`✅ ${toplamIsaretlenen} evrak KALICI olarak işaretlendi!`);
+    if (basariliSayi > 0) {
+        showToast(`🔒 ${basariliSayi} evrak KALICI olarak KİLİTLENDİ!`);
+    }
+    
+    // Seçimleri temizle
+    selectedIds.clear();
     renderTable();
 }
 
@@ -448,9 +473,9 @@ function showSummary() {
         return;
     }
     
-    let toplamM = 0, toplamKg = 0, excelCount = 0;
+    let toplamM = 0, toplamKg = 0, kilitliCount = 0;
     for (let item of filtered) {
-        if (item._excel) excelCount++;
+        if (item._excel) kilitliCount++;
         for (let k of (item.Kalemler || [])) {
             toplamM += parseFloat(k["Miktar"]) || 0;
             toplamKg += parseFloat(k["Toplam Kg"]) || 0;
@@ -462,8 +487,8 @@ function showSummary() {
         <div style="display:flex; justify-content:space-around; flex-wrap:wrap; gap:15px">
             <div><strong>📅 ${new Date(startDate).toLocaleDateString('tr-TR')} - ${new Date(endDate).toLocaleDateString('tr-TR')}</strong></div>
             <div><strong>📦 Evrak</strong><br>${filtered.length}</div>
-            <div><strong>✅ Excel</strong><br>${excelCount}</div>
-            <div><strong>⏳ Bekleyen</strong><br>${filtered.length - excelCount}</div>
+            <div><strong>🔒 Kilitli</strong><br>${kilitliCount}</div>
+            <div><strong>⏳ Açık</strong><br>${filtered.length - kilitliCount}</div>
             <div><strong>🔢 Miktar</strong><br>${toplamM.toFixed(2)}</div>
             <div><strong>⚖️ Kg</strong><br>${toplamKg.toFixed(2)}</div>
         </div>`;
@@ -478,13 +503,13 @@ function changeSac(sac) {
     filterData();
 }
 
-// OTOMATİK YENİLEME
-function startAutoRefresh() {
-    if (refreshInterval) clearInterval(refreshInterval);
-    refreshInterval = setInterval(() => {
-        console.log("🔄 Otomatik yenileme çalışıyor...");
-        loadAllData();
-    }, 60000); // 30 saniyede bir
+function updateRoleUI() {
+    const badge = document.getElementById("userRolBadge");
+    if (isAdmin()) {
+        badge.innerHTML = '<span class="admin-badge">Admin</span>';
+    } else {
+        badge.innerHTML = '';
+    }
 }
 
 // EVENTLER
@@ -496,9 +521,9 @@ document.getElementById("girisBtn").onclick = () => {
         document.getElementById("loginPage").style.display = "none";
         document.getElementById("mainPage").style.display = "block";
         document.getElementById("currentUser").innerHTML = user;
+        updateRoleUI();
         initFirebase();
         loadAllData();
-        startAutoRefresh();
     } else {
         document.getElementById("hata").style.display = "block";
         setTimeout(() => document.getElementById("hata").style.display = "none", 2000);
@@ -506,7 +531,6 @@ document.getElementById("girisBtn").onclick = () => {
 };
 
 document.getElementById("cikisBtn").onclick = () => {
-    if (refreshInterval) clearInterval(refreshInterval);
     document.getElementById("mainPage").style.display = "none";
     document.getElementById("loginPage").style.display = "flex";
     selectedIds.clear();
@@ -524,10 +548,12 @@ document.getElementById("temizleBtn").onclick = () => {
     document.getElementById("filtre_excel").checked = false;
     filterData();
 };
-document.getElementById("excelBtn").onclick = () => excelAktarVeIsaretle();
+document.getElementById("excelBtn").onclick = () => excelAktarVeKilit();
 document.getElementById("tumunuSecBtn").onclick = () => {
     for (let item of displayData) {
-        selectedIds.add(item._uniqueId);
+        if (!item._excel) {  // Sadece kilitli OLMAYANLAR seçilir
+            selectedIds.add(item._uniqueId);
+        }
     }
     renderTable();
 };
@@ -544,10 +570,9 @@ for (let tab of document.querySelectorAll('.sac-tab')) {
 window.goPage = goPage;
 window.showDetail = showDetail;
 
-console.log("✅ SİSTEM HAZIR!");
-console.log("📌 Excel aktarılan evraklar KALICI olarak işaretlenir!");
-console.log("📌 Otomatik yenileme 30 saniyede bir çalışır!");
-console.log("📌 'Şimdi Yenile' butonu ile manuel yenileyebilirsiniz!");
+console.log("✅ SAC ENTEGRE - KİLİTLİ SİSTEM HAZIR!");
+console.log("🔒 Excel'e aktarılan evraklar KİLİTLENİR ve bir daha asla değişmez!");
+console.log("🔒 Kilitli evrakların checkbox'ları devre dışıdır!");
 </script>
 </body>
 </html>
