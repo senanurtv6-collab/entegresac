@@ -3,54 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAC ENTEGRE - KESİN ÇÖZÜM</title>
+    <title>SAC ENTEGRE - SON</title>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: #0a1628; }
+        body { font-family: Arial, sans-serif; background: #0a1628; }
         .login-page { width: 100%; height: 100vh; background: linear-gradient(135deg, #0a1628, #1a2a4a); display: flex; justify-content: center; align-items: center; }
-        .login-container { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); padding: 40px; border-radius: 20px; width: 400px; }
+        .login-container { background: rgba(255,255,255,0.05); padding: 40px; border-radius: 20px; width: 400px; }
         .login-container h1 { color: white; text-align: center; margin-bottom: 20px; }
-        .login-container h1 span { color: #4fc3f7; }
-        .login-container input { width: 100%; padding: 12px; margin: 10px 0; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; }
-        .login-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #4fc3f7, #0288d1); border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; }
+        .login-container input { width: 100%; padding: 12px; margin: 10px 0; background: rgba(255,255,255,0.1); border: 1px solid #ccc; border-radius: 8px; color: white; }
+        .login-btn { width: 100%; padding: 12px; background: #4fc3f7; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; }
         .main-page { display: none; padding: 20px; background: #f5f7fb; min-height: 100vh; }
-        .container { max-width: 1600px; margin: 0 auto; background: white; padding: 25px; border-radius: 16px; }
-        .sac-tab-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; }
-        .sac-tab { padding: 10px 25px; background: #f0f0f0; border: none; border-radius: 8px 8px 0 0; cursor: pointer; font-weight: 600; }
+        .container { max-width: 1400px; margin: 0 auto; background: white; padding: 20px; border-radius: 16px; }
+        .sac-tab-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .sac-tab { padding: 10px 20px; background: #e0e0e0; border: none; border-radius: 8px; cursor: pointer; }
         .sac-tab.active { background: #2196f3; color: white; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th, td { border: 1px solid #e0e0e0; padding: 10px 12px; text-align: center; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
         th { background: #2c3e50; color: white; position: sticky; top: 0; }
-        .excel-aktarilmis { background-color: #e8f5e9 !important; }
+        .excel-aktarilmis { background-color: #c8e6c9 !important; }
         .excel-badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
-        .excel-badge.aktarildi { background: #4caf50; color: white; }
-        .excel-badge.aktarilmadi { background: #95a5a6; color: white; }
-        .btn { padding: 8px 18px; border: none; border-radius: 8px; cursor: pointer; margin: 3px; }
+        .excel-badge.aktarildi { background: #2e7d32; color: white; }
+        .excel-badge.aktarilmadi { background: #757575; color: white; }
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; margin: 3px; font-weight: bold; }
         .btn-success { background: #27ae60; color: white; }
         .btn-info { background: #00bcd4; color: white; }
-        .btn-warning { background: #f39c12; color: white; }
         .btn-danger { background: #e74c3c; color: white; }
         .btn-secondary { background: #7f8c8d; color: white; }
-        .pagination { display: flex; gap: 6px; justify-content: center; margin-top: 20px; }
-        .pagination button { padding: 6px 12px; cursor: pointer; border: 1px solid #ddd; background: white; border-radius: 6px; }
-        .filtre-satir { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px; align-items: flex-end; }
-        .filtre-satir input, .filtre-satir select { padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; min-width: 130px; }
-        .toast { position: fixed; bottom: 20px; right: 20px; background: #333; color: white; padding: 12px 24px; border-radius: 8px; z-index: 9999; animation: fadeOut 3s ease; }
+        .pagination { display: flex; gap: 5px; justify-content: center; margin-top: 20px; }
+        .pagination button { padding: 5px 10px; cursor: pointer; }
+        .filtre-satir { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; padding: 15px; background: #f5f5f5; border-radius: 8px; align-items: flex-end; }
+        .filtre-satir input, .filtre-satir select { padding: 8px; border: 1px solid #ddd; border-radius: 4px; min-width: 120px; }
+        .toast { position: fixed; bottom: 20px; right: 20px; background: #333; color: white; padding: 12px 20px; border-radius: 8px; z-index: 9999; animation: fadeOut 3s ease; }
         @keyframes fadeOut { 0% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; } }
-        .logout-btn { background: #e74c3c; color: white; padding: 8px 20px; border: none; border-radius: 8px; cursor: pointer; }
-        .user-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px 20px; background: #e8f4f8; border-radius: 12px; }
-        .loading { text-align: center; padding: 50px; color: #666; }
-        .spinner { display: inline-block; width: 24px; height: 24px; border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 10px; }
+        .logout-btn { background: #e74c3c; color: white; padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; }
+        .user-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px; background: #e8f4f8; border-radius: 8px; }
+        .loading { text-align: center; padding: 40px; color: #666; }
+        .spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 10px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .gecmis-table-container { max-height: 550px; overflow-y: auto; border: 1px solid #e0e0e0; border-radius: 10px; margin-top: 10px; }
+        .gecmis-table-container { max-height: 500px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px; }
         .admin-badge { background: #8e44ad; color: white; padding: 3px 10px; border-radius: 20px; font-size: 11px; margin-left: 8px; }
-        .secili-info { background: #2196f3; color: white; padding: 6px 14px; border-radius: 20px; font-size: 13px; }
-        .ozet-container { background: linear-gradient(135deg, #1a237e, #283593); padding: 20px; border-radius: 12px; margin: 15px 0; display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-around; color: white; }
-        .ozet-item { text-align: center; background: rgba(255,255,255,0.12); padding: 12px 20px; border-radius: 10px; min-width: 120px; }
-        .ozet-deger { font-size: 22px; font-weight: 700; }
-        .action-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 15px; align-items: center; justify-content: space-between; }
+        .secili-info { background: #2196f3; color: white; padding: 6px 15px; border-radius: 20px; font-size: 13px; }
+        .ozet-container { background: linear-gradient(135deg, #1a237e, #283593); padding: 15px; border-radius: 12px; margin: 15px 0; display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-around; color: white; }
+        .ozet-item { text-align: center; background: rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 8px; }
+        .ozet-deger { font-size: 22px; font-weight: bold; }
+        .action-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; align-items: center; justify-content: space-between; }
     </style>
 </head>
 <body>
@@ -58,11 +56,10 @@
 <div class="login-page" id="loginPage">
     <div class="login-container">
         <h1>🔄 <span>SAC</span> ENTEGRE</h1>
-        <p style="color: #90a4ae; text-align: center; margin-bottom: 20px;">Kesin Çözüm - Kalıcı İşaretleme</p>
         <input type="text" id="loginUsername" placeholder="Kullanıcı Adı">
         <input type="password" id="loginPassword" placeholder="Şifre">
         <button class="login-btn" id="loginBtn">GİRİŞ YAP</button>
-        <div id="loginError" style="color: #ef5350; margin-top: 12px; text-align: center; display: none;">Hatalı giriş!</div>
+        <div id="loginError" style="color: #ef5350; margin-top: 10px; text-align: center; display: none;">Hatalı giriş!</div>
     </div>
 </div>
 
@@ -70,7 +67,7 @@
     <div class="container">
         <div class="user-info">
             <span>👤 <span id="currentUser"></span> <span id="userRolBadge"></span></span>
-            <button class="logout-btn" id="logoutBtn">Çıkış Yap</button>
+            <button class="logout-btn" id="logoutBtn">Çıkış</button>
         </div>
         
         <div class="sac-tab-bar">
@@ -84,41 +81,46 @@
         <div class="filtre-satir">
             <input type="text" id="filtre_seri" placeholder="Seri No">
             <input type="text" id="filtre_sira" placeholder="Sıra No">
-            <select id="filtre_grup"><option value="">Tüm Gruplar</option><option value="430">430</option><option value="DKP">DKP</option><option value="GALVANIZ">GALVANİZ</option><option value="304">304</option><option value="316">316</option><option value="201">201</option></select>
+            <select id="filtre_grup">
+                <option value="">Tüm Gruplar</option>
+                <option value="430">430</option><option value="DKP">DKP</option>
+                <option value="GALVANIZ">GALVANİZ</option><option value="304">304</option>
+                <option value="316">316</option><option value="201">201</option>
+            </select>
             <input type="date" id="filtre_tarih">
-            <label><input type="checkbox" id="filtre_excel"> ✅ Sadece Excel Aktarılmış</label>
+            <label><input type="checkbox" id="filtre_excel"> Sadece Excel Aktarılmış</label>
             <button class="btn btn-info" id="filtreUygulaBtn">🔍 Filtrele</button>
             <button class="btn btn-secondary" id="filtreTemizleBtn">🗑️ Temizle</button>
         </div>
         
         <div class="action-bar">
             <div>
-                <button class="btn btn-success" id="seciliExceleAktarBtn">📎 Seçilenleri Excel'e Aktar ve KALICI İşaretle</button>
+                <button class="btn btn-success" id="excelAktarBtn">📎 Seçilenleri Excel'e Aktar ve KALICI İşaretle</button>
                 <button class="btn btn-secondary" id="tumunuSecBtn">☑️ Tümünü Seç</button>
                 <button class="btn btn-secondary" id="secimiTemizleBtn">⬜ Seçimi Temizle</button>
-                <button class="btn btn-danger" id="excelIsaretiniKaldirBtn" style="display: none;">⚠️ İşareti Kaldır (Admin)</button>
+                <button class="btn btn-danger" id="isaretKaldirBtn" style="display:none">⚠️ İşareti Kaldır</button>
             </div>
             <div>
-                <input type="date" id="ozetBaslangic" style="padding: 6px;">
-                <span>➡</span>
-                <input type="date" id="ozetBitis" style="padding: 6px;">
-                <button class="btn btn-warning" id="ozetGosterBtn">📊 Özet</button>
+                <input type="date" id="ozetBas" style="padding:6px">
+                <span>→</span>
+                <input type="date" id="ozetBit" style="padding:6px">
+                <button class="btn btn-info" id="ozetBtn">📊 Özet</button>
             </div>
             <span class="secili-info">✅ <span id="seciliSayi">0</span> seçili</span>
         </div>
         
-        <div id="ozetAlani" style="display: none;"></div>
-        <div style="margin-bottom: 10px;"><span id="kayitSayisi" style="padding: 6px 12px; background: #e8f4f8; border-radius: 20px; font-size: 12px;"></span></div>
+        <div id="ozetAlani" style="display:none"></div>
+        <div style="margin-bottom:10px"><span id="kayitSayisi" style="padding:5px 12px;background:#e8f4f8;border-radius:20px;font-size:12px"></span></div>
         
-        <div class="gecmis-table-container" id="gecmisTablosu">
+        <div class="gecmis-table-container" id="tabloContainer">
             <div class="loading"><div class="spinner"></div> Veriler yükleniyor...</div>
         </div>
-        <div id="paginationContainer" class="pagination"></div>
+        <div id="pagination" class="pagination"></div>
     </div>
 </div>
 
 <script>
-// ==================== FIREBASE KONFİG ====================
+// FIREBASE KONFIG
 const firebaseConfigs = {
     sac1: { apiKey: "AIzaSyDDFOpgvi0r3YHsZvYV6JgdCrZp1QZazPY", authDomain: "sac1-kesim.firebaseapp.com", databaseURL: "https://sac1-kesim-default-rtdb.europe-west1.firebasedatabase.app", projectId: "sac1-kesim", storageBucket: "sac1-kesim.firebasestorage.app", messagingSenderId: "419582241444", appId: "1:419582241444:web:2fdb127ca47bae8a011431" },
     sac2: { apiKey: "AIzaSyDTYnX6lNtrMOr5CJ98MTPrKp6vwR2JeZM", authDomain: "sac2-kesim.firebaseapp.com", databaseURL: "https://sac2-kesim-default-rtdb.europe-west1.firebasedatabase.app", projectId: "sac2-kesim", storageBucket: "sac2-kesim.firebasestorage.app", messagingSenderId: "385295068161", appId: "1:385295068161:web:ddd269dd34f66753d8a400" },
@@ -126,353 +128,354 @@ const firebaseConfigs = {
     sac4: { apiKey: "AIzaSyAmlL-xVTWjahrz1VjXx-i86i0TuJ7HBdw", authDomain: "sac4-kesim.firebaseapp.com", databaseURL: "https://sac4-kesim-default-rtdb.europe-west1.firebasedatabase.app", projectId: "sac4-kesim", storageBucket: "sac4-kesim.firebasestorage.app", messagingSenderId: "62938924671", appId: "1:62938924671:web:a23687f982c53db6fa214a" }
 };
 
-const kullanicilar = { SAC1: "sac1sac", Muhammed: "mhm2468", Burak: "brk2468" };
-const adminKullanicilar = ["Muhammed", "Burak"];
+const users = { SAC1: "sac1sac", Muhammed: "mhm2468", Burak: "brk2468" };
+const admins = ["Muhammed", "Burak"];
 
-let aktifKullanici = null;
-let aktifSac = "all";
-let tumVeriler = { sac1: [], sac2: [], sac3: [], sac4: [] };
-let gosterilenVeriler = [];
-let seciliEvrakIdSet = new Set();
+let currentUser = null;
+let activeSac = "all";
+let allData = { sac1: [], sac2: [], sac3: [], sac4: [] };
+let displayData = [];
+let selectedIds = new Set();
 let currentPage = 1;
-let pageSize = 25;
+let pageSize = 20;
 
-const firebaseDatabases = {};
+const dbs = {};
 
-// ==================== BAŞLAT ====================
-function initFirebase() {
-    for (const [name, config] of Object.entries(firebaseConfigs)) {
+// BAŞLAT
+function initDBs() {
+    for (let [name, config] of Object.entries(firebaseConfigs)) {
         try {
             let app;
-            try { app = firebase.app(`app_${name}`); } 
-            catch(e) { app = firebase.initializeApp(config, `app_${name}`); }
-            firebaseDatabases[name] = firebase.database(app);
-        } catch(e) { console.warn(name, "hata:", e); }
+            try { app = firebase.app(name); } catch(e) { app = firebase.initializeApp(config, name); }
+            dbs[name] = firebase.database(app);
+        } catch(e) { console.warn(name, e); }
     }
 }
 
-function getEvrakId(item, sacKey) {
-    return `${sacKey}_${item["Seri No"] || "SD"}_${item["Sıra No"]}`;
+function getEvrakId(item, sac) {
+    return `${sac}_${item["Seri No"] || "SD"}_${item["Sıra No"]}`;
 }
 
-function tarihParse(tarihStr) {
-    if (!tarihStr) return null;
-    let parts = tarihStr.split('.');
-    if (parts.length !== 3) return null;
-    return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+function showToast(msg, isErr = false) {
+    let t = document.createElement('div');
+    t.className = 'toast';
+    t.style.backgroundColor = isErr ? '#e74c3c' : '#27ae60';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
 }
 
-function showToast(msg, isError = false) {
-    let toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.style.backgroundColor = isError ? '#e74c3c' : '#27ae60';
-    toast.textContent = msg;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
-}
+function isAdmin() { return admins.includes(currentUser); }
 
-function isAdmin() { return adminKullanicilar.includes(aktifKullanici); }
-
-// ==================== VERİ YÜKLEME (KRİTİK: Excel durumu ayrı kontrol) ====================
+// ANA VERİ YÜKLEME - KRİTİK KISIM
 async function loadAllData() {
-    document.getElementById("gecmisTablosu").innerHTML = '<div class="loading"><div class="spinner"></div> Veriler yükleniyor...</div>';
+    document.getElementById("tabloContainer").innerHTML = '<div class="loading"><div class="spinner"></div> Yükleniyor...</div>';
     
-    for (const [sacName, db] of Object.entries(firebaseDatabases)) {
+    for (let [sac, db] of Object.entries(dbs)) {
         try {
-            const snapshot = await db.ref(`${sacName}Kesim/`).once('value');
-            const data = snapshot.val();
-            let veriler = [];
+            const snap = await db.ref(`${sac}Kesim/`).once('value');
+            const data = snap.val();
             
-            if (data && data.gecmisVeriler && Array.isArray(data.gecmisVeriler)) veriler = data.gecmisVeriler;
-            else if (data && Array.isArray(data)) veriler = data;
+            let records = [];
+            if (data && data.gecmisVeriler) records = data.gecmisVeriler;
+            else if (data && Array.isArray(data)) records = data;
             
-            // KRİTİK: Excel aktarılanlar verisini ayrı bir nesne olarak al
-            const excelAktarilanlar = (data && data.excelAktarilanlar) ? data.excelAktarilanlar : {};
+            const excelRecords = (data && data.excelAktarilanlar) ? data.excelAktarilanlar : {};
             
-            tumVeriler[sacName] = veriler.map(item => {
-                const evrakId = getEvrakId(item, sacName);
-                // DOĞRUDAN FIREBASE'DEKİ VERİYİ KULLAN
-                const excelKaydi = excelAktarilanlar[evrakId];
-                
+            allData[sac] = records.map(item => {
+                const evrakId = getEvrakId(item, sac);
+                const isExcel = excelRecords[evrakId] ? true : false;
                 return {
                     ...item,
-                    _sacKaynak: sacName.toUpperCase(),
-                    _sacKey: sacName,
-                    _evrakId: evrakId,
-                    _excelAktarildi: excelKaydi ? true : false,  // SADECE FIREBASE'DE VARSA TRUE
-                    _excelTarih: excelKaydi ? excelKaydi.tarih : null,
-                    _excelKullanici: excelKaydi ? excelKaydi.kullanici : null
+                    _sac: sac.toUpperCase(),
+                    _sacKey: sac,
+                    _id: evrakId,
+                    _excel: isExcel,
+                    _excelDate: excelRecords[evrakId] ? excelRecords[evrakId].tarih : null
                 };
             });
             
-            console.log(`📁 ${sacName.toUpperCase()}: ${tumVeriler[sacName].length} kayıt, Excel: ${tumVeriler[sacName].filter(i => i._excelAktarildi).length}`);
-        } catch(e) { 
-            console.error(sacName, e); 
-            tumVeriler[sacName] = []; 
+            console.log(`${sac.toUpperCase()}: ${allData[sac].length} kayıt, Excel: ${allData[sac].filter(x => x._excel).length}`);
+        } catch(e) {
+            console.error(sac, e);
+            allData[sac] = [];
         }
     }
     
-    const toplam = Object.values(tumVeriler).reduce((s, a) => s + a.length, 0);
-    console.log(`✅ TOPLAM: ${toplam} kayıt yüklendi`);
-    verileriGoster();
+    filterData();
 }
 
-// ==================== FİLTRELE ====================
-function verileriGoster() {
-    let kaynak = [];
-    if (aktifSac === "all") {
-        for (let v of Object.values(tumVeriler)) kaynak.push(...v);
+// FİLTRELE
+function filterData() {
+    let source = [];
+    if (activeSac === "all") {
+        for (let v of Object.values(allData)) source.push(...v);
     } else {
-        kaynak = [...(tumVeriler[aktifSac] || [])];
+        source = [...(allData[activeSac] || [])];
     }
     
-    let seri = document.getElementById("filtre_seri").value.toLowerCase();
-    let sira = document.getElementById("filtre_sira").value.toLowerCase();
-    let grup = document.getElementById("filtre_grup").value;
-    let tarihFiltre = document.getElementById("filtre_tarih").value;
-    let sadeceExcel = document.getElementById("filtre_excel").checked;
+    const seri = document.getElementById("filtre_seri").value.toLowerCase();
+    const sira = document.getElementById("filtre_sira").value.toLowerCase();
+    const grup = document.getElementById("filtre_grup").value;
+    const tarih = document.getElementById("filtre_tarih").value;
+    const onlyExcel = document.getElementById("filtre_excel").checked;
     
-    gosterilenVeriler = kaynak.filter(item => {
+    displayData = source.filter(item => {
         if (seri && !(item["Seri No"] || "").toLowerCase().includes(seri)) return false;
         if (sira && !(item["Sıra No"] || "").toString().toLowerCase().includes(sira)) return false;
         if (grup && item["Grup"] !== grup) return false;
-        if (tarihFiltre) {
-            let itemTarih = item["Kayıt Tarihi"] || "";
-            let filtreTarih = new Date(tarihFiltre).toLocaleDateString('tr-TR');
-            if (itemTarih !== filtreTarih) return false;
+        if (tarih) {
+            const itemTarih = item["Kayıt Tarihi"] || "";
+            const filterTarih = new Date(tarih).toLocaleDateString('tr-TR');
+            if (itemTarih !== filterTarih) return false;
         }
-        if (sadeceExcel && !item._excelAktarildi) return false;
+        if (onlyExcel && !item._excel) return false;
         return true;
     });
     
     currentPage = 1;
-    tabloyuGoster();
+    renderTable();
 }
 
-// ==================== TABLO GÖSTER ====================
-function tabloyuGoster() {
-    let totalPages = Math.ceil(gosterilenVeriler.length / pageSize);
-    if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+// TABLO GÖSTER
+function renderTable() {
+    const total = Math.ceil(displayData.length / pageSize);
+    if (currentPage > total && total > 0) currentPage = total;
     if (currentPage < 1) currentPage = 1;
     
-    let start = (currentPage - 1) * pageSize;
-    let pageData = gosterilenVeriler.slice(start, start + pageSize);
-    let aktarilanSayisi = gosterilenVeriler.filter(i => i._excelAktarildi).length;
+    const start = (currentPage - 1) * pageSize;
+    const pageData = displayData.slice(start, start + pageSize);
+    const excelCount = displayData.filter(x => x._excel).length;
     
-    document.getElementById("kayitSayisi").innerHTML = `📊 Toplam: ${gosterilenVeriler.length} evrak (${aktarilanSayisi} Excel aktarılmış) | Sayfa ${currentPage}/${totalPages || 1}`;
+    document.getElementById("kayitSayisi").innerHTML = `📊 Toplam: ${displayData.length} evrak (${excelCount} Excel aktarılmış) | Sayfa ${currentPage}/${total || 1}`;
     
-    if (gosterilenVeriler.length === 0) {
-        document.getElementById("gecmisTablosu").innerHTML = '<div class="loading">📭 Kayıt bulunmuyor.</div>';
-        document.getElementById("paginationContainer").innerHTML = "";
-        document.getElementById("seciliSayi").innerHTML = seciliEvrakIdSet.size;
+    if (displayData.length === 0) {
+        document.getElementById("tabloContainer").innerHTML = '<div class="loading">📭 Kayıt yok</div>';
+        document.getElementById("pagination").innerHTML = "";
+        document.getElementById("seciliSayi").innerHTML = selectedIds.size;
         return;
     }
     
-    let html = `<table style="width:100%;"><thead><tr>
-        <th style="width:40px"><input type="checkbox" id="selectAllCheckbox"></th>
+    let html = `<table style="width:100%"><thead>运转
+        <th style="width:40px"><input type="checkbox" id="selectAllCheck"></th>
         <th>SAC</th><th>Seri No</th><th>Sıra No</th><th>Grup</th>
-        <th>Oluşturan</th><th>Kayıt Tarihi</th><th>Excel Durumu</th><th>İşlem</th>
-    </tr></thead><tbody>`;
+        <th>Oluşturan</th><th>Kayıt Tarihi</th><th>Durum</th><th>İşlem</th>
+    </td></thead><tbody>`;
     
     pageData.forEach(item => {
-        let isChecked = seciliEvrakIdSet.has(item._evrakId);
-        let rowClass = item._excelAktarildi ? 'excel-aktarilmis' : '';
-        let excelText = item._excelAktarildi ? 
-            '<span class="excel-badge aktarildi">✅ Aktarıldı</span>' : 
-            '<span class="excel-badge aktarilmadi">⏳ Bekliyor</span>';
-        let sacIcon = item._sacKaynak === 'SAC1' ? '🔵' : (item._sacKaynak === 'SAC2' ? '🟠' : (item._sacKaynak === 'SAC3' ? '🟢' : '🟣'));
+        const checked = selectedIds.has(item._id) ? 'checked' : '';
+        const rowClass = item._excel ? 'excel-aktarilmis' : '';
+        const status = item._excel ? 
+            '<span class="excel-badge aktarildi">✅ AKTARILDI</span>' : 
+            '<span class="excel-badge aktarilmadi">⏳ BEKLİYOR</span>';
+        const icon = item._sac === 'SAC1' ? '🔵' : (item._sac === 'SAC2' ? '🟠' : (item._sac === 'SAC3' ? '🟢' : '🟣'));
         
         html += `<tr class="${rowClass}">
-            <td><input type="checkbox" class="evrak-checkbox" data-id="${item._evrakId}" ${isChecked ? 'checked' : ''}></td>
-            <td>${sacIcon} ${item._sacKaynak}</td>
+            <td><input type="checkbox" class="itemCheck" data-id="${item._id}" ${checked}></td>
+            <td>${icon} ${item._sac}</td>
             <td>${item["Seri No"] || '-'}</td>
             <td><strong>${item["Sıra No"] || '-'}</strong></td>
             <td>${item["Grup"] || '-'}</td>
             <td>${item["Olusturan"] || '-'}</td>
             <td>${item["Kayıt Tarihi"] || '-'}</td>
-            <td>${excelText}</td>
-            <td><button class="btn btn-info btn-sm" onclick="detayGoster('${item._evrakId}')" style="padding:4px 10px;">📄 Detay</button></td>
+            <td>${status}</td>
+            <td><button class="btn btn-info btn-sm" onclick="showDetail('${item._id}')" style="padding:4px 8px">📄 Detay</button></td>
         </tr>`;
     });
     
     html += `</tbody></div>`;
-    document.getElementById("gecmisTablosu").innerHTML = html;
-    document.getElementById("seciliSayi").innerHTML = seciliEvrakIdSet.size;
+    document.getElementById("tabloContainer").innerHTML = html;
+    document.getElementById("seciliSayi").innerHTML = selectedIds.size;
     
     // Sayfalama
     let pagHtml = "";
-    if (totalPages > 1) {
-        pagHtml += `<button onclick="sayfaDegistir(1)" ${currentPage === 1 ? 'disabled' : ''}>⏮</button>`;
-        pagHtml += `<button onclick="sayfaDegistir(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>◀</button>`;
-        pagHtml += `<span style="padding:6px 14px;background:#2196f3;color:white;border-radius:6px">${currentPage}/${totalPages}</span>`;
-        pagHtml += `<button onclick="sayfaDegistir(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>▶</button>`;
-        pagHtml += `<button onclick="sayfaDegistir(${totalPages})" ${currentPage === totalPages ? 'disabled' : ''}>⏭</button>`;
+    if (total > 1) {
+        pagHtml += `<button onclick="goPage(1)" ${currentPage === 1 ? 'disabled' : ''}>⏮</button>`;
+        pagHtml += `<button onclick="goPage(${currentPage-1})" ${currentPage === 1 ? 'disabled' : ''}>◀</button>`;
+        pagHtml += `<span style="padding:5px 12px;background:#2196f3;color:white;border-radius:6px">${currentPage}/${total}</span>`;
+        pagHtml += `<button onclick="goPage(${currentPage+1})" ${currentPage === total ? 'disabled' : ''}>▶</button>`;
+        pagHtml += `<button onclick="goPage(${total})" ${currentPage === total ? 'disabled' : ''}>⏭</button>`;
     }
-    document.getElementById("paginationContainer").innerHTML = pagHtml;
+    document.getElementById("pagination").innerHTML = pagHtml;
     
-    // Toplu seçim
-    let selectAll = document.getElementById("selectAllCheckbox");
+    // Select All
+    const selectAll = document.getElementById("selectAllCheck");
     if (selectAll) {
         selectAll.onclick = (e) => {
             pageData.forEach(item => {
-                if (e.target.checked) seciliEvrakIdSet.add(item._evrakId);
-                else seciliEvrakIdSet.delete(item._evrakId);
+                if (e.target.checked) selectedIds.add(item._id);
+                else selectedIds.delete(item._id);
             });
-            tabloyuGoster();
+            renderTable();
         };
     }
     
     // Tekli seçim
-    document.querySelectorAll('.evrak-checkbox').forEach(cb => {
+    document.querySelectorAll('.itemCheck').forEach(cb => {
         cb.onclick = (e) => {
-            e.stopPropagation();
-            let id = cb.dataset.id;
-            if (cb.checked) seciliEvrakIdSet.add(id);
-            else seciliEvrakIdSet.delete(id);
-            document.getElementById("seciliSayi").innerHTML = seciliEvrakIdSet.size;
+            const id = cb.dataset.id;
+            if (cb.checked) selectedIds.add(id);
+            else selectedIds.delete(id);
+            document.getElementById("seciliSayi").innerHTML = selectedIds.size;
         };
     });
 }
 
-function sayfaDegistir(page) { currentPage = page; tabloyuGoster(); }
+function goPage(page) { currentPage = page; renderTable(); }
 
-function detayGoster(evrakId) {
-    let item = gosterilenVeriler.find(i => i._evrakId === evrakId);
+function showDetail(id) {
+    const item = displayData.find(x => x._id === id);
     if (!item) return;
-    let toplamMiktar = 0, toplamKg = 0;
+    let totalM = 0, totalKg = 0;
     (item.Kalemler || []).forEach(k => {
-        toplamMiktar += parseFloat(k["Miktar"]) || 0;
-        toplamKg += parseFloat(k["Toplam Kg"]) || 0;
+        totalM += parseFloat(k["Miktar"]) || 0;
+        totalKg += parseFloat(k["Toplam Kg"]) || 0;
     });
-    alert(`📄 EVRAK DETAYI\n\nSAC: ${item._sacKaynak}\nSeri: ${item["Seri No"]}\nSıra: ${item["Sıra No"]}\nGrup: ${item["Grup"]}\nOluşturan: ${item["Olusturan"]}\nTarih: ${item["Kayıt Tarihi"]}\nExcel: ${item._excelAktarildi ? '✅ AKTARILDI' : '⏳ Bekliyor'}\n\n📦 Toplam Miktar: ${toplamMiktar.toFixed(2)}\n⚖️ Toplam Kg: ${toplamKg.toFixed(2)}`);
+    alert(`📄 EVRAK DETAYI\n\nSAC: ${item._sac}\nSeri: ${item["Seri No"]}\nSıra: ${item["Sıra No"]}\nGrup: ${item["Grup"]}\nOluşturan: ${item["Olusturan"]}\nTarih: ${item["Kayıt Tarihi"]}\nExcel: ${item._excel ? 'AKTARILDI ✅' : 'BEKLİYOR ⏳'}\n\n📦 Toplam Miktar: ${totalM.toFixed(2)}\n⚖️ Toplam Kg: ${totalKg.toFixed(2)}`);
 }
 
-// ==================== EXCEL'E AKTAR VE KALICI İŞARETLE ====================
+// EXCEL'E AKTAR VE KALICI İŞARETLE
 async function excelAktarVeIsaretle() {
-    if (seciliEvrakIdSet.size === 0) { showToast("Lütfen evrak seçin!", true); return; }
+    if (selectedIds.size === 0) { showToast("Lütfen evrak seçin!", true); return; }
     
-    let secilenler = gosterilenVeriler.filter(item => seciliEvrakIdSet.has(item._evrakId));
-    if (secilenler.length === 0) { showToast("Seçili evrak bulunamadı!", true); return; }
+    const selected = displayData.filter(item => selectedIds.has(item._id));
+    if (selected.length === 0) { showToast("Seçili evrak bulunamadı!", true); return; }
     
-    showToast(`📎 ${secilenler.length} evrak Excel'e aktarılıyor ve KALICI işaretleniyor...`);
+    showToast(`📎 ${selected.length} evrak Excel'e aktarılıyor ve işaretleniyor...`);
     
     // Excel oluştur
     let excel = `<html><head><meta charset="UTF-8"><style>th{background:#2c3e50;color:white;padding:8px}</style></head><body>
-        <h2>SAC RAPORU</h2><p>Tarih: ${new Date().toLocaleString('tr-TR')}</p>
-        <p>Kullanıcı: ${aktifKullanici} | Evrak: ${secilenler.length}</p>
-        <table border="1"><thead><tr><th>SAC</th><th>Seri No</th><th>Sıra No</th><th>Grup</th><th>Oluşturan</th><th>Tarih</th><th>Stok Kodu</th><th>Miktar</th><th>Kg</th></tr></thead><tbody>`;
+        <h2>SAC RAPORU</h2>
+        <p>Tarih: ${new Date().toLocaleString('tr-TR')}</p>
+        <p>Kullanıcı: ${currentUser}</p>
+        <p>Toplam Evrak: ${selected.length}</p>
+        <table border="1"><thead>运转<th>SAC</th><th>Seri</th><th>Sıra</th><th>Grup</th><th>Oluşturan</th><th>Tarih</th><th>Stok Kodu</th><th>Miktar</th><th>Kg</th></tr></thead><tbody>`;
     
-    secilenler.forEach(item => {
+    selected.forEach(item => {
         (item.Kalemler || []).forEach(k => {
-            excel += `<tr><td>${item._sacKaynak}</td><td>${item["Seri No"]}</td><td>${item["Sıra No"]}</td><td>${item["Grup"]}</td><td>${item["Olusturan"]}</td><td>${item["Kayıt Tarihi"]}</td><td>${k["Stok Kodu"]}</td><td>${k["Miktar"]}</td><td>${k["Toplam Kg"]}</td></tr>`;
+            excel += `<tr>
+                <td>${item._sac}</td>
+                <td>${item["Seri No"] || ''}</td>
+                <td>${item["Sıra No"] || ''}</td>
+                <td>${item["Grup"] || ''}</td>
+                <td>${item["Olusturan"] || ''}</td>
+                <td>${item["Kayıt Tarihi"] || ''}</td>
+                <td>${k["Stok Kodu"] || ''}</td>
+                <td>${k["Miktar"] || 0}</td>
+                <td>${k["Toplam Kg"] || 0}</td>
+            </tr>`;
         });
     });
-    excel += `</tbody></table></body></html>`;
+    excel += `</tbody>:</body></html>`;
     
-    let blob = new Blob([excel], { type: 'application/vnd.ms-excel' });
-    let link = document.createElement('a');
+    const blob = new Blob([excel], { type: 'application/vnd.ms-excel' });
+    const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = `SAC_Rapor_${Date.now()}.xls`;
     link.click();
     URL.revokeObjectURL(link.href);
     
-    // Firebase'e KALICI işaretle
-    let basarili = 0;
-    for (let item of secilenler) {
-        let db = firebaseDatabases[item._sacKey];
+    // FIREBASE'E KALICI İŞARETLE
+    let success = 0;
+    for (let item of selected) {
+        const db = dbs[item._sacKey];
         if (db) {
             try {
-                await db.ref(`${item._sacKey}Kesim/excelAktarilanlar/${item._evrakId}`).set({
+                await db.ref(`${item._sacKey}Kesim/excelAktarilanlar/${item._id}`).set({
                     tarih: new Date().toISOString(),
-                    kullanici: aktifKullanici,
+                    kullanici: currentUser,
                     seriNo: item["Seri No"],
                     siraNo: item["Sıra No"]
                 });
-                item._excelAktarildi = true;
-                basarili++;
+                item._excel = true;
+                success++;
             } catch(e) { console.error(e); }
         }
     }
     
-    showToast(`✅ ${basarili} evrak KALICI olarak işaretlendi!`);
-    tabloyuGoster();
+    showToast(`✅ ${success} evrak KALICI olarak işaretlendi!`);
+    renderTable();
 }
 
-// ==================== İŞARETİ KALDIR (SADECE ADMIN) ====================
-async function excelIsaretiniKaldir() {
+// İŞARETİ KALDIR (SADECE ADMIN)
+async function isaretKaldir() {
     if (!isAdmin()) { showToast("Bu işlem sadece Admin!", true); return; }
-    if (seciliEvrakIdSet.size === 0) { showToast("Lütfen evrak seçin!", true); return; }
-    if (!confirm("İşaretler KALICI olarak kaldırılacak. Devam?")) return;
+    if (selectedIds.size === 0) { showToast("Lütfen evrak seçin!", true); return; }
+    if (!confirm("Seçili evrakların Excel işareti KALICI olarak kaldırılacak. Devam?")) return;
     
-    let secilenler = gosterilenVeriler.filter(item => seciliEvrakIdSet.has(item._evrakId));
-    let basarili = 0;
+    const selected = displayData.filter(item => selectedIds.has(item._id));
+    let success = 0;
     
-    for (let item of secilenler) {
-        let db = firebaseDatabases[item._sacKey];
+    for (let item of selected) {
+        const db = dbs[item._sacKey];
         if (db) {
             try {
-                await db.ref(`${item._sacKey}Kesim/excelAktarilanlar/${item._evrakId}`).remove();
-                item._excelAktarildi = false;
-                basarili++;
+                await db.ref(`${item._sacKey}Kesim/excelAktarilanlar/${item._id}`).remove();
+                item._excel = false;
+                success++;
             } catch(e) { console.error(e); }
         }
     }
     
-    showToast(`⚠️ ${basarili} evrağın işareti kaldırıldı!`);
-    tabloyuGoster();
+    showToast(`⚠️ ${success} evrağın işareti kaldırıldı!`);
+    renderTable();
 }
 
-// ==================== ÖZET ====================
-function ozetGoster() {
-    let basStr = document.getElementById("ozetBaslangic").value;
-    let bitStr = document.getElementById("ozetBitis").value;
-    if (!basStr || !bitStr) { showToast("Tarih seçin!", true); return; }
+// ÖZET
+function showSummary() {
+    const startDate = document.getElementById("ozetBas").value;
+    const endDate = document.getElementById("ozetBit").value;
+    if (!startDate || !endDate) { showToast("Tarih seçin!", true); return; }
     
-    let bas = new Date(basStr); bas.setHours(0,0,0,0);
-    let bit = new Date(bitStr); bit.setHours(23,59,59,999);
+    const start = new Date(startDate); start.setHours(0,0,0,0);
+    const end = new Date(endDate); end.setHours(23,59,59,999);
     
-    let filtrelenmis = gosterilenVeriler.filter(item => {
-        let itemTarih = tarihParse(item["Kayıt Tarihi"]);
-        return itemTarih && itemTarih >= bas && itemTarih <= bit;
+    const filtered = displayData.filter(item => {
+        if (!item["Kayıt Tarihi"]) return false;
+        const parts = item["Kayıt Tarihi"].split('.');
+        if (parts.length !== 3) return false;
+        const itemDate = new Date(parts[2], parts[1]-1, parts[0]);
+        return itemDate >= start && itemDate <= end;
     });
     
-    if (filtrelenmis.length === 0) {
+    if (filtered.length === 0) {
         document.getElementById("ozetAlani").style.display = "block";
         document.getElementById("ozetAlani").innerHTML = '<div class="ozet-container"><div class="ozet-item"><div class="ozet-deger">Kayıt Yok</div></div></div>';
         return;
     }
     
-    let toplamMiktar = 0, toplamKg = 0, excelAktarilan = 0;
-    filtrelenmis.forEach(item => {
-        if (item._excelAktarildi) excelAktarilan++;
+    let totalM = 0, totalKg = 0, excelCount = 0;
+    filtered.forEach(item => {
+        if (item._excel) excelCount++;
         (item.Kalemler || []).forEach(k => {
-            toplamMiktar += parseFloat(k["Miktar"]) || 0;
-            toplamKg += parseFloat(k["Toplam Kg"]) || 0;
+            totalM += parseFloat(k["Miktar"]) || 0;
+            totalKg += parseFloat(k["Toplam Kg"]) || 0;
         });
     });
     
     document.getElementById("ozetAlani").style.display = "block";
     document.getElementById("ozetAlani").innerHTML = `<div class="ozet-container">
-        <div class="ozet-item"><div class="ozet-deger">${filtrelenmis.length}</div><div>📦 Evrak</div></div>
-        <div class="ozet-item"><div class="ozet-deger">${excelAktarilan}</div><div>✅ Excel</div></div>
-        <div class="ozet-item"><div class="ozet-deger">${toplamMiktar.toFixed(2)}</div><div>🔢 Miktar</div></div>
-        <div class="ozet-item"><div class="ozet-deger">${toplamKg.toFixed(2)} kg</div><div>⚖️ Ağırlık</div></div>
+        <div class="ozet-item"><div class="ozet-deger">${filtered.length}</div><div>📦 Evrak</div></div>
+        <div class="ozet-item"><div class="ozet-deger">${excelCount}</div><div>✅ Excel</div></div>
+        <div class="ozet-item"><div class="ozet-deger">${filtered.length - excelCount}</div><div>⏳ Bekleyen</div></div>
+        <div class="ozet-item"><div class="ozet-deger">${totalM.toFixed(2)}</div><div>🔢 Miktar</div></div>
+        <div class="ozet-item"><div class="ozet-deger">${totalKg.toFixed(2)} kg</div><div>⚖️ Ağırlık</div></div>
     </div>`;
 }
 
-// ==================== SAC DEĞİŞTİR ====================
-function sacDegistir(sac) {
-    aktifSac = sac;
-    document.querySelectorAll('.sac-tab').forEach(tab => {
-        if (tab.dataset.sac === sac) tab.classList.add('active');
-        else tab.classList.remove('active');
+// SAC DEĞİŞTİR
+function changeSac(sac) {
+    activeSac = sac;
+    document.querySelectorAll('.sac-tab').forEach(t => {
+        if (t.dataset.sac === sac) t.classList.add('active');
+        else t.classList.remove('active');
     });
-    verileriGoster();
+    filterData();
 }
 
-function rolBilgiGuncelle() {
-    let badge = document.getElementById("userRolBadge");
-    let btn = document.getElementById("excelIsaretiniKaldirBtn");
+function updateRoleUI() {
+    const badge = document.getElementById("userRolBadge");
+    const btn = document.getElementById("isaretKaldirBtn");
     if (isAdmin()) {
         badge.innerHTML = '<span class="admin-badge">Admin</span>';
         if (btn) btn.style.display = "inline-block";
@@ -482,65 +485,63 @@ function rolBilgiGuncelle() {
     }
 }
 
-// ==================== EVENTLER ====================
+// EVENTLER
 document.getElementById("loginBtn").onclick = () => {
-    let user = document.getElementById("loginUsername").value.trim();
-    let pass = document.getElementById("loginPassword").value.trim();
-    if (kullanicilar[user] && kullanicilar[user] === pass) {
-        aktifKullanici = user;
+    const user = document.getElementById("loginUsername").value.trim();
+    const pass = document.getElementById("loginPassword").value.trim();
+    if (users[user] && users[user] === pass) {
+        currentUser = user;
         document.getElementById("loginPage").style.display = "none";
         document.getElementById("mainPage").style.display = "block";
         document.getElementById("currentUser").innerHTML = user;
-        rolBilgiGuncelle();
-        initFirebase();
+        updateRoleUI();
+        initDBs();
         loadAllData();
     } else {
         document.getElementById("loginError").style.display = "block";
-        setTimeout(() => document.getElementById("loginError").style.display = "none", 3000);
+        setTimeout(() => document.getElementById("loginError").style.display = "none", 2000);
     }
 };
 
 document.getElementById("logoutBtn").onclick = () => {
     document.getElementById("mainPage").style.display = "none";
     document.getElementById("loginPage").style.display = "flex";
-    seciliEvrakIdSet.clear();
+    selectedIds.clear();
 };
 
-document.getElementById("filtreUygulaBtn").onclick = () => verileriGoster();
+document.getElementById("filtreUygulaBtn").onclick = () => filterData();
 document.getElementById("filtreTemizleBtn").onclick = () => {
     document.getElementById("filtre_seri").value = "";
     document.getElementById("filtre_sira").value = "";
     document.getElementById("filtre_grup").value = "";
     document.getElementById("filtre_tarih").value = "";
     document.getElementById("filtre_excel").checked = false;
-    verileriGoster();
+    filterData();
 };
-document.getElementById("seciliExceleAktarBtn").onclick = () => excelAktarVeIsaretle();
-document.getElementById("excelIsaretiniKaldirBtn").onclick = () => excelIsaretiniKaldir();
+document.getElementById("excelAktarBtn").onclick = () => excelAktarVeIsaretle();
+document.getElementById("isaretKaldirBtn").onclick = () => isaretKaldir();
 document.getElementById("tumunuSecBtn").onclick = () => {
-    gosterilenVeriler.forEach(item => seciliEvrakIdSet.add(item._evrakId));
-    tabloyuGoster();
+    displayData.forEach(item => selectedIds.add(item._id));
+    renderTable();
 };
 document.getElementById("secimiTemizleBtn").onclick = () => {
-    seciliEvrakIdSet.clear();
-    tabloyuGoster();
+    selectedIds.clear();
+    renderTable();
 };
-document.getElementById("ozetGosterBtn").onclick = () => ozetGoster();
+document.getElementById("ozetBtn").onclick = () => showSummary();
 
 document.querySelectorAll('.sac-tab').forEach(tab => {
-    tab.onclick = () => sacDegistir(tab.dataset.sac);
+    tab.onclick = () => changeSac(tab.dataset.sac);
 });
 
 document.getElementById("loginPassword").addEventListener("keypress", (e) => {
     if (e.key === "Enter") document.getElementById("loginBtn").click();
 });
 
-window.sayfaDegistir = sayfaDegistir;
-window.detayGoster = detayGoster;
+window.goPage = goPage;
+window.showDetail = showDetail;
 
-console.log("✅ SAC ENTEGRE - KESİN ÇÖZÜM HAZIR!");
-console.log("📌 Excel aktarılan evraklar KALICI olarak FIREBASE'de saklanır");
-console.log("📌 Yeni kayıt eklense, sayfa yenilense bile işaretler ASLA DEĞİŞMEZ!");
+console.log("✅ SİSTEM HAZIR - Excel işaretleri KALICI!");
 </script>
 </body>
 </html>
