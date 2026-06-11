@@ -381,13 +381,13 @@ async function excelAktarVeIsaretle() {
     
     console.log("Seçilenler:", secilenBySac);
     
-    // Excel oluştur (SAYI FORMATLI)
+    // Excel oluştur - SAYI FORMATI DÜZELTİLDİ
     let excel = `<html><head><meta charset="UTF-8">
     <style>
         th { background: #2c3e50; color: white; padding: 10px; }
         td { padding: 8px; border: 1px solid #ddd; }
-        .sayi { text-align: right; mso-number-format: '0.00'; }
-        .sayi4 { text-align: right; mso-number-format: '0.0000'; }
+        .sayi { text-align: right; }
+        .sayi4 { text-align: right; }
     </style>
     </head><body>
         <h2>SAC ENTEGRE RAPORU</h2>
@@ -409,10 +409,15 @@ async function excelAktarVeIsaretle() {
             const item = allData.find(i => i._sacKey === sac && i._siraNo === sira);
             if (item && item.Kalemler) {
                 for (let k of item.Kalemler) {
-                    // Sayısal değerleri formatla
+                    // Sayısal değerleri al (nokta ile ayır)
                     let miktar = parseFloat(k["Miktar"]) || 0;
                     let plaka = parseFloat(k["1 Plaka (kg)"]) || 0;
                     let toplamKg = parseFloat(k["Toplam Kg"]) || 0;
+                    
+                    // Virgülü noktaya çevir (güvenlik için)
+                    if (typeof k["Miktar"] === 'string') miktar = parseFloat(k["Miktar"].replace(/,/g, '.')) || 0;
+                    if (typeof k["1 Plaka (kg)"] === 'string') plaka = parseFloat(k["1 Plaka (kg)"].replace(/,/g, '.')) || 0;
+                    if (typeof k["Toplam Kg"] === 'string') toplamKg = parseFloat(k["Toplam Kg"].replace(/,/g, '.')) || 0;
                     
                     excel += `<tr>
                         <td>${item._sac}</td>
@@ -422,9 +427,9 @@ async function excelAktarVeIsaretle() {
                         <td>${item["Kayıt Tarihi"] || ''}</td>
                         <td>${k["Stok Kodu"] || ''}</td>
                         <td style="text-align:left">${k["Stok İsmi"] || ''}</td>
-                        <td class="sayi">${miktar.toFixed(2)}</td>
-                        <td class="sayi4">${plaka.toFixed(4)}</td>
-                        <td class="sayi">${toplamKg.toFixed(2)}</td>
+                        <td class="sayi">${miktar.toFixed(2).replace('.', ',')}</td>
+                        <td class="sayi4">${plaka.toFixed(4).replace('.', ',')}</td>
+                        <td class="sayi">${toplamKg.toFixed(2).replace('.', ',')}</td>
                         <td>${k["Açıklama"] || ''}</td>
                     </tr>`;
                 }
@@ -666,9 +671,8 @@ window.showDetail = showDetail;
 console.log("✅ SİSTEM HAZIR!");
 console.log("📌 Excel aktarılan evraklar KALICI olarak işaretlenir!");
 console.log("📌 Admin kullanıcılar 'Excel İşaretini Kaldır' butonunu görebilir!");
-console.log("📌 Excel çıktısında sayılar sağa hizalı ve sayı formatında!");
+console.log("📌 Excel çıktısında sayılar Türkiye formatında (virgül ile) gösterilir!");
 console.log("📌 Otomatik yenileme 30 saniyede bir çalışır!");
-console.log("📌 'Şimdi Yenile' butonu ile manuel yenileyebilirsiniz!");
 </script>
 </body>
 </html>
