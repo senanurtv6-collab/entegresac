@@ -256,7 +256,7 @@ function renderTable() {
         return;
     }
     
-    let html = `<table style="width:100%"><thead>运转
+    let html = `<table style="width:100%"><thead>
         <th style="width:40px"><input type="checkbox" id="selectAllCheck"></th>
         <th>SAC</th><th>Seri No</th><th>Sıra No</th><th>Grup</th>
         <th>Oluşturan</th><th>Kayıt Tarihi</th><th>Durum</th><th>İşlem</th>
@@ -349,7 +349,7 @@ async function excelAktarVeIsaretle() {
         <p>Tarih: ${new Date().toLocaleString('tr-TR')}</p>
         <p>Kullanıcı: ${currentUser}</p>
         <p>Toplam Evrak: ${selected.length}</p>
-        <table border="1"><thead>运转<th>SAC</th><th>Seri</th><th>Sıra</th><th>Grup</th><th>Oluşturan</th><th>Tarih</th><th>Stok Kodu</th><th>Miktar</th><th>Kg</th></tr></thead><tbody>`;
+        <table border="1"><thead><th>SAC</th><th>Seri</th><th>Sıra</th><th>Grup</th><th>Oluşturan</th><th>Tarih</th><th>Stok Kodu</th><th>Miktar</th><th>Kg</th></tr></thead><tbody>`;
     
     selected.forEach(item => {
         (item.Kalemler || []).forEach(k => {
