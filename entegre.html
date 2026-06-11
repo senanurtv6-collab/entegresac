@@ -8,47 +8,57 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #0a1628; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a1628; }
         .login-page { width: 100%; height: 100vh; background: linear-gradient(135deg, #0a1628, #1a2a4a); display: flex; justify-content: center; align-items: center; }
-        .login-container { background: rgba(255,255,255,0.05); padding: 40px; border-radius: 20px; width: 400px; }
+        .login-container { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); padding: 40px; border-radius: 20px; width: 400px; }
         .login-container h1 { color: white; text-align: center; margin-bottom: 20px; }
-        .login-container input { width: 100%; padding: 12px; margin: 10px 0; background: rgba(255,255,255,0.1); border: 1px solid #ccc; border-radius: 8px; color: white; }
-        .login-btn { width: 100%; padding: 12px; background: #4fc3f7; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; }
+        .login-container h1 span { color: #4fc3f7; }
+        .login-container input { width: 100%; padding: 12px; margin: 10px 0; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; font-size: 14px; }
+        .login-container input:focus { outline: none; border-color: #4fc3f7; }
+        .login-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #4fc3f7, #0288d1); border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; font-size: 16px; }
+        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(79,195,247,0.4); }
         .main-page { display: none; padding: 20px; background: #f5f7fb; min-height: 100vh; }
-        .container { max-width: 1400px; margin: 0 auto; background: white; padding: 20px; border-radius: 16px; }
-        .sac-tab-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .sac-tab { padding: 10px 20px; background: #e0e0e0; border: none; border-radius: 8px; cursor: pointer; }
+        .container { max-width: 1600px; margin: 0 auto; background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .sac-tab-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; }
+        .sac-tab { padding: 10px 25px; background: #f0f0f0; border: none; border-radius: 8px 8px 0 0; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.3s; }
         .sac-tab.active { background: #2196f3; color: white; }
+        .sac-tab:hover:not(.active) { background: #ddd; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
-        th { background: #2c3e50; color: white; position: sticky; top: 0; }
-        .excel-aktarilmis { background-color: #c8e6c9 !important; }
-        .excel-badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
-        .excel-badge.aktarildi { background: #2e7d32; color: white; }
-        .excel-badge.aktarilmadi { background: #757575; color: white; }
-        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; margin: 3px; font-weight: bold; }
+        th, td { border: 1px solid #e0e0e0; padding: 10px 12px; text-align: center; vertical-align: middle; }
+        th { background: #2c3e50; color: white; position: sticky; top: 0; font-weight: 600; }
+        .excel-aktarilmis { background-color: #e8f5e9 !important; }
+        .excel-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+        .excel-badge.aktarildi { background: #4caf50; color: white; }
+        .excel-badge.aktarilmadi { background: #95a5a6; color: white; }
+        .btn { padding: 8px 18px; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.2s; margin: 3px; }
+        .btn:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
         .btn-success { background: #27ae60; color: white; }
         .btn-info { background: #00bcd4; color: white; }
+        .btn-warning { background: #f39c12; color: white; }
         .btn-danger { background: #e74c3c; color: white; }
         .btn-secondary { background: #7f8c8d; color: white; }
-        .pagination { display: flex; gap: 5px; justify-content: center; margin-top: 20px; }
-        .pagination button { padding: 5px 10px; cursor: pointer; }
-        .filtre-satir { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; padding: 15px; background: #f5f5f5; border-radius: 8px; align-items: flex-end; }
-        .filtre-satir input, .filtre-satir select { padding: 8px; border: 1px solid #ddd; border-radius: 4px; min-width: 120px; }
-        .toast { position: fixed; bottom: 20px; right: 20px; background: #333; color: white; padding: 12px 20px; border-radius: 8px; z-index: 9999; animation: fadeOut 3s ease; }
-        @keyframes fadeOut { 0% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; } }
-        .logout-btn { background: #e74c3c; color: white; padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; }
-        .user-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px; background: #e8f4f8; border-radius: 8px; }
-        .loading { text-align: center; padding: 40px; color: #666; }
-        .spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 10px; }
+        .pagination { display: flex; gap: 6px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+        .pagination button { padding: 6px 12px; cursor: pointer; border: 1px solid #ddd; background: white; border-radius: 6px; }
+        .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .filtre-satir { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px; align-items: flex-end; }
+        .filtre-satir input, .filtre-satir select { padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; min-width: 130px; font-size: 13px; }
+        .filtre-satir label { display: flex; align-items: center; gap: 6px; background: white; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+        .toast { position: fixed; bottom: 20px; right: 20px; background: #333; color: white; padding: 12px 24px; border-radius: 8px; z-index: 9999; animation: fadeOut 3s ease; font-size: 14px; }
+        @keyframes fadeOut { 0% { opacity: 1; transform: translateY(0); } 70% { opacity: 1; } 100% { opacity: 0; transform: translateY(20px); } }
+        .logout-btn { background: #e74c3c; color: white; padding: 8px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; }
+        .user-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px 20px; background: #e8f4f8; border-radius: 12px; }
+        .loading { text-align: center; padding: 50px; color: #666; }
+        .spinner { display: inline-block; width: 24px; height: 24px; border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 10px; vertical-align: middle; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .gecmis-table-container { max-height: 500px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px; }
-        .admin-badge { background: #8e44ad; color: white; padding: 3px 10px; border-radius: 20px; font-size: 11px; margin-left: 8px; }
-        .secili-info { background: #2196f3; color: white; padding: 6px 15px; border-radius: 20px; font-size: 13px; }
-        .ozet-container { background: linear-gradient(135deg, #1a237e, #283593); padding: 15px; border-radius: 12px; margin: 15px 0; display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-around; color: white; }
-        .ozet-item { text-align: center; background: rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 8px; }
-        .ozet-deger { font-size: 22px; font-weight: bold; }
-        .action-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; align-items: center; justify-content: space-between; }
+        .gecmis-table-container { max-height: 550px; overflow-y: auto; border: 1px solid #e0e0e0; border-radius: 10px; margin-top: 10px; }
+        .admin-badge { background: #8e44ad; color: white; padding: 3px 12px; border-radius: 20px; font-size: 11px; margin-left: 8px; }
+        .secili-info { background: #2196f3; color: white; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; }
+        .ozet-container { background: linear-gradient(135deg, #1a237e, #283593); padding: 20px; border-radius: 12px; margin: 15px 0; display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-around; color: white; }
+        .ozet-item { text-align: center; background: rgba(255,255,255,0.12); padding: 12px 20px; border-radius: 10px; min-width: 120px; }
+        .ozet-deger { font-size: 24px; font-weight: 700; }
+        .action-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 15px; align-items: center; justify-content: space-between; }
+        .refresh-btn { background: #2196f3; color: white; }
+        .checkbox-col { width: 40px; }
     </style>
 </head>
 <body>
@@ -56,10 +66,11 @@
 <div class="login-page" id="loginPage">
     <div class="login-container">
         <h1>🔄 <span>SAC</span> ENTEGRE</h1>
+        <p style="color: #90a4ae; text-align: center; margin-bottom: 20px;">Tüm Kesim Takip Sistemi</p>
         <input type="text" id="loginUsername" placeholder="Kullanıcı Adı">
         <input type="password" id="loginPassword" placeholder="Şifre">
         <button class="login-btn" id="loginBtn">GİRİŞ YAP</button>
-        <div id="loginError" style="color: #ef5350; margin-top: 10px; text-align: center; display: none;">Hatalı giriş!</div>
+        <div id="loginError" style="color: #ef5350; margin-top: 12px; text-align: center; display: none;">Kullanıcı adı veya şifre hatalı!</div>
     </div>
 </div>
 
@@ -67,7 +78,7 @@
     <div class="container">
         <div class="user-info">
             <span>👤 <span id="currentUser"></span> <span id="userRolBadge"></span></span>
-            <button class="logout-btn" id="logoutBtn">Çıkış</button>
+            <button class="logout-btn" id="logoutBtn">Çıkış Yap</button>
         </div>
         
         <div class="sac-tab-bar">
@@ -83,14 +94,18 @@
             <input type="text" id="filtre_sira" placeholder="Sıra No">
             <select id="filtre_grup">
                 <option value="">Tüm Gruplar</option>
-                <option value="430">430</option><option value="DKP">DKP</option>
-                <option value="GALVANIZ">GALVANİZ</option><option value="304">304</option>
-                <option value="316">316</option><option value="201">201</option>
+                <option value="430">430</option>
+                <option value="DKP">DKP</option>
+                <option value="GALVANIZ">GALVANİZ</option>
+                <option value="304">304</option>
+                <option value="316">316</option>
+                <option value="201">201</option>
             </select>
             <input type="date" id="filtre_tarih">
-            <label><input type="checkbox" id="filtre_excel"> Sadece Excel Aktarılmış</label>
+            <label><input type="checkbox" id="filtre_excel"> ✅ Sadece Excel Aktarılmış</label>
             <button class="btn btn-info" id="filtreUygulaBtn">🔍 Filtrele</button>
             <button class="btn btn-secondary" id="filtreTemizleBtn">🗑️ Temizle</button>
+            <button class="btn refresh-btn" id="refreshBtn">🔄 Yenile</button>
         </div>
         
         <div class="action-bar">
@@ -98,19 +113,22 @@
                 <button class="btn btn-success" id="excelAktarBtn">📎 Seçilenleri Excel'e Aktar ve KALICI İşaretle</button>
                 <button class="btn btn-secondary" id="tumunuSecBtn">☑️ Tümünü Seç</button>
                 <button class="btn btn-secondary" id="secimiTemizleBtn">⬜ Seçimi Temizle</button>
-                <button class="btn btn-danger" id="isaretKaldirBtn" style="display:none">⚠️ İşareti Kaldır</button>
+                <button class="btn btn-danger" id="isaretKaldirBtn" style="display:none">⚠️ İşareti Kaldır (Admin)</button>
             </div>
             <div>
-                <input type="date" id="ozetBas" style="padding:6px">
-                <span>→</span>
-                <input type="date" id="ozetBit" style="padding:6px">
-                <button class="btn btn-info" id="ozetBtn">📊 Özet</button>
+                <input type="date" id="ozetBas" placeholder="Başlangıç" style="padding: 6px 10px;">
+                <span>➡</span>
+                <input type="date" id="ozetBit" placeholder="Bitiş" style="padding: 6px 10px;">
+                <button class="btn btn-warning" id="ozetBtn">📊 Özet Göster</button>
             </div>
-            <span class="secili-info">✅ <span id="seciliSayi">0</span> seçili</span>
+            <span class="secili-info">✅ <span id="seciliSayi">0</span> evrak seçili</span>
         </div>
         
-        <div id="ozetAlani" style="display:none"></div>
-        <div style="margin-bottom:10px"><span id="kayitSayisi" style="padding:5px 12px;background:#e8f4f8;border-radius:20px;font-size:12px"></span></div>
+        <div id="ozetAlani" style="display: none;"></div>
+        
+        <div style="margin-bottom: 10px;">
+            <span id="kayitSayisi" style="padding: 6px 16px; background: #e8f4f8; border-radius: 20px; font-size: 13px; font-weight: 500;"></span>
+        </div>
         
         <div class="gecmis-table-container" id="tabloContainer">
             <div class="loading"><div class="spinner"></div> Veriler yükleniyor...</div>
@@ -120,113 +138,171 @@
 </div>
 
 <script>
-// FIREBASE KONFIG
-const firebaseConfigs = {
-    sac1: { apiKey: "AIzaSyDDFOpgvi0r3YHsZvYV6JgdCrZp1QZazPY", authDomain: "sac1-kesim.firebaseapp.com", databaseURL: "https://sac1-kesim-default-rtdb.europe-west1.firebasedatabase.app", projectId: "sac1-kesim", storageBucket: "sac1-kesim.firebasestorage.app", messagingSenderId: "419582241444", appId: "1:419582241444:web:2fdb127ca47bae8a011431" },
-    sac2: { apiKey: "AIzaSyDTYnX6lNtrMOr5CJ98MTPrKp6vwR2JeZM", authDomain: "sac2-kesim.firebaseapp.com", databaseURL: "https://sac2-kesim-default-rtdb.europe-west1.firebasedatabase.app", projectId: "sac2-kesim", storageBucket: "sac2-kesim.firebasestorage.app", messagingSenderId: "385295068161", appId: "1:385295068161:web:ddd269dd34f66753d8a400" },
-    sac3: { apiKey: "AIzaSyDHxIkQgAnazAVkNngUsSaII3Ij7DIvj9s", authDomain: "sac3-kesim.firebaseapp.com", databaseURL: "https://sac3-kesim-default-rtdb.europe-west1.firebasedatabase.app", projectId: "sac3-kesim", storageBucket: "sac3-kesim.firebasestorage.app", messagingSenderId: "365842219004", appId: "1:365842219004:web:91aaf46917786f8d9e7c79" },
-    sac4: { apiKey: "AIzaSyAmlL-xVTWjahrz1VjXx-i86i0TuJ7HBdw", authDomain: "sac4-kesim.firebaseapp.com", databaseURL: "https://sac4-kesim-default-rtdb.europe-west1.firebasedatabase.app", projectId: "sac4-kesim", storageBucket: "sac4-kesim.firebasestorage.app", messagingSenderId: "62938924671", appId: "1:62938924671:web:a23687f982c53db6fa214a" }
+// ==================== FIREBASE KONFİGÜRASYONLARI ====================
+const FIREBASE_CONFIGS = {
+    sac1: {
+        apiKey: "AIzaSyDDFOpgvi0r3YHsZvYV6JgdCrZp1QZazPY",
+        authDomain: "sac1-kesim.firebaseapp.com",
+        databaseURL: "https://sac1-kesim-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "sac1-kesim",
+        storageBucket: "sac1-kesim.firebasestorage.app",
+        messagingSenderId: "419582241444",
+        appId: "1:419582241444:web:2fdb127ca47bae8a011431"
+    },
+    sac2: {
+        apiKey: "AIzaSyDTYnX6lNtrMOr5CJ98MTPrKp6vwR2JeZM",
+        authDomain: "sac2-kesim.firebaseapp.com",
+        databaseURL: "https://sac2-kesim-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "sac2-kesim",
+        storageBucket: "sac2-kesim.firebasestorage.app",
+        messagingSenderId: "385295068161",
+        appId: "1:385295068161:web:ddd269dd34f66753d8a400"
+    },
+    sac3: {
+        apiKey: "AIzaSyDHxIkQgAnazAVkNngUsSaII3Ij7DIvj9s",
+        authDomain: "sac3-kesim.firebaseapp.com",
+        databaseURL: "https://sac3-kesim-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "sac3-kesim",
+        storageBucket: "sac3-kesim.firebasestorage.app",
+        messagingSenderId: "365842219004",
+        appId: "1:365842219004:web:91aaf46917786f8d9e7c79"
+    },
+    sac4: {
+        apiKey: "AIzaSyAmlL-xVTWjahrz1VjXx-i86i0TuJ7HBdw",
+        authDomain: "sac4-kesim.firebaseapp.com",
+        databaseURL: "https://sac4-kesim-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "sac4-kesim",
+        storageBucket: "sac4-kesim.firebasestorage.app",
+        messagingSenderId: "62938924671",
+        appId: "1:62938924671:web:a23687f982c53db6fa214a"
+    }
 };
 
-const users = { SAC1: "sac1sac", Muhammed: "mhm2468", Burak: "brk2468" };
-const admins = ["Muhammed", "Burak"];
+// ==================== KULLANICILAR ====================
+const USERS = { SAC1: "sac1sac", Muhammed: "mhm2468", Burak: "brk2468" };
+const ADMINS = ["Muhammed", "Burak"];
 
+// ==================== GLOBAL DEĞİŞKENLER ====================
 let currentUser = null;
 let activeSac = "all";
-let allData = { sac1: [], sac2: [], sac3: [], sac4: [] };
+let allData = [];           // Tüm evraklar (id, sac, excel durumu vb.)
 let displayData = [];
 let selectedIds = new Set();
 let currentPage = 1;
 let pageSize = 20;
 
-const dbs = {};
+let firebaseApps = {};
+let firebaseDBs = {};
 
-// BAŞLAT
-function initDBs() {
-    for (let [name, config] of Object.entries(firebaseConfigs)) {
+// ==================== FIREBASE BAŞLAT ====================
+function initFirebase() {
+    for (let [name, config] of Object.entries(FIREBASE_CONFIGS)) {
         try {
-            let app;
-            try { app = firebase.app(name); } catch(e) { app = firebase.initializeApp(config, name); }
-            dbs[name] = firebase.database(app);
-        } catch(e) { console.warn(name, e); }
+            // Her SAC için ayrı bir Firebase uygulaması oluştur
+            let app = firebase.initializeApp(config, name);
+            firebaseApps[name] = app;
+            firebaseDBs[name] = firebase.database(app);
+            console.log(`✅ ${name.toUpperCase()} Firebase başlatıldı`);
+        } catch(e) {
+            console.warn(`${name} başlatılamadı:`, e);
+        }
     }
 }
 
-function getEvrakId(item, sac) {
+// ==================== YARDIMCI FONKSİYONLAR ====================
+function getEvrakId(sac, item) {
     return `${sac}_${item["Seri No"] || "SD"}_${item["Sıra No"]}`;
 }
 
-function showToast(msg, isErr = false) {
-    let t = document.createElement('div');
-    t.className = 'toast';
-    t.style.backgroundColor = isErr ? '#e74c3c' : '#27ae60';
-    t.textContent = msg;
-    document.body.appendChild(t);
-    setTimeout(() => t.remove(), 3000);
+function tarihParse(tarihStr) {
+    if (!tarihStr) return null;
+    let parts = tarihStr.split('.');
+    if (parts.length !== 3) return null;
+    return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
 }
 
-function isAdmin() { return admins.includes(currentUser); }
+function showToast(msg, isError = false) {
+    let toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.style.backgroundColor = isError ? '#e74c3c' : '#27ae60';
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+}
 
-// ANA VERİ YÜKLEME - KRİTİK KISIM
+function isAdmin() { return ADMINS.includes(currentUser); }
+
+// ==================== VERİ YÜKLEME ====================
 async function loadAllData() {
-    document.getElementById("tabloContainer").innerHTML = '<div class="loading"><div class="spinner"></div> Yükleniyor...</div>';
+    document.getElementById("tabloContainer").innerHTML = '<div class="loading"><div class="spinner"></div> Tüm SAC verileri yükleniyor...</div>';
     
-    for (let [sac, db] of Object.entries(dbs)) {
+    let newAllData = [];
+    
+    for (let [sacName, db] of Object.entries(firebaseDBs)) {
         try {
-            const snap = await db.ref(`${sac}Kesim/`).once('value');
-            const data = snap.val();
+            console.log(`📁 ${sacName} verileri çekiliyor...`);
+            const snapshot = await db.ref(`${sacName}Kesim/`).once('value');
+            const data = snapshot.val();
             
             let records = [];
             if (data && data.gecmisVeriler) records = data.gecmisVeriler;
             else if (data && Array.isArray(data)) records = data;
             
+            // Excel aktarılanları al
             const excelRecords = (data && data.excelAktarilanlar) ? data.excelAktarilanlar : {};
+            console.log(`   Excel kayıtları:`, Object.keys(excelRecords).length);
             
-            allData[sac] = records.map(item => {
-                const evrakId = getEvrakId(item, sac);
+            for (let item of records) {
+                const evrakId = getEvrakId(sacName, item);
                 const isExcel = excelRecords[evrakId] ? true : false;
-                return {
+                
+                newAllData.push({
                     ...item,
-                    _sac: sac.toUpperCase(),
-                    _sacKey: sac,
+                    _sac: sacName.toUpperCase(),
+                    _sacKey: sacName,
                     _id: evrakId,
                     _excel: isExcel,
                     _excelDate: excelRecords[evrakId] ? excelRecords[evrakId].tarih : null
-                };
-            });
+                });
+            }
             
-            console.log(`${sac.toUpperCase()}: ${allData[sac].length} kayıt, Excel: ${allData[sac].filter(x => x._excel).length}`);
+            console.log(`   ${sacName.toUpperCase()}: ${records.length} kayıt, Excel: ${records.filter((_, idx) => {
+                let id = getEvrakId(sacName, records[idx]);
+                return excelRecords[id];
+            }).length}`);
+            
         } catch(e) {
-            console.error(sac, e);
-            allData[sac] = [];
+            console.error(`${sacName} hatası:`, e);
         }
     }
+    
+    allData = newAllData;
+    console.log(`✅ TOPLAM: ${allData.length} kayıt yüklendi`);
     
     filterData();
 }
 
-// FİLTRELE
+// ==================== FİLTRELE ====================
 function filterData() {
-    let source = [];
-    if (activeSac === "all") {
-        for (let v of Object.values(allData)) source.push(...v);
-    } else {
-        source = [...(allData[activeSac] || [])];
+    let source = [...allData];
+    
+    if (activeSac !== "all") {
+        source = source.filter(item => item._sacKey === activeSac);
     }
     
-    const seri = document.getElementById("filtre_seri").value.toLowerCase();
-    const sira = document.getElementById("filtre_sira").value.toLowerCase();
-    const grup = document.getElementById("filtre_grup").value;
-    const tarih = document.getElementById("filtre_tarih").value;
+    const seriFilter = document.getElementById("filtre_seri").value.toLowerCase();
+    const siraFilter = document.getElementById("filtre_sira").value.toLowerCase();
+    const grupFilter = document.getElementById("filtre_grup").value;
+    const tarihFilter = document.getElementById("filtre_tarih").value;
     const onlyExcel = document.getElementById("filtre_excel").checked;
     
     displayData = source.filter(item => {
-        if (seri && !(item["Seri No"] || "").toLowerCase().includes(seri)) return false;
-        if (sira && !(item["Sıra No"] || "").toString().toLowerCase().includes(sira)) return false;
-        if (grup && item["Grup"] !== grup) return false;
-        if (tarih) {
-            const itemTarih = item["Kayıt Tarihi"] || "";
-            const filterTarih = new Date(tarih).toLocaleDateString('tr-TR');
+        if (seriFilter && !(item["Seri No"] || "").toLowerCase().includes(seriFilter)) return false;
+        if (siraFilter && !(item["Sıra No"] || "").toString().toLowerCase().includes(siraFilter)) return false;
+        if (grupFilter && item["Grup"] !== grupFilter) return false;
+        if (tarihFilter) {
+            let itemTarih = item["Kayıt Tarihi"] || "";
+            let filterTarih = new Date(tarihFilter).toLocaleDateString('tr-TR');
             if (itemTarih !== filterTarih) return false;
         }
         if (onlyExcel && !item._excel) return false;
@@ -237,49 +313,66 @@ function filterData() {
     renderTable();
 }
 
-// TABLO GÖSTER
+// ==================== TABLO GÖSTER ====================
 function renderTable() {
-    const total = Math.ceil(displayData.length / pageSize);
-    if (currentPage > total && total > 0) currentPage = total;
+    const totalPages = Math.ceil(displayData.length / pageSize);
+    if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
     if (currentPage < 1) currentPage = 1;
     
     const start = (currentPage - 1) * pageSize;
     const pageData = displayData.slice(start, start + pageSize);
-    const excelCount = displayData.filter(x => x._excel).length;
+    const excelCount = displayData.filter(i => i._excel).length;
     
-    document.getElementById("kayitSayisi").innerHTML = `📊 Toplam: ${displayData.length} evrak (${excelCount} Excel aktarılmış) | Sayfa ${currentPage}/${total || 1}`;
+    document.getElementById("kayitSayisi").innerHTML = `📊 Toplam: ${displayData.length} evrak (${excelCount} Excel aktarılmış) | Sayfa ${currentPage}/${totalPages || 1}`;
     
     if (displayData.length === 0) {
-        document.getElementById("tabloContainer").innerHTML = '<div class="loading">📭 Kayıt yok</div>';
+        document.getElementById("tabloContainer").innerHTML = '<div class="loading">📭 Kayıt bulunmuyor.</div>';
         document.getElementById("pagination").innerHTML = "";
         document.getElementById("seciliSayi").innerHTML = selectedIds.size;
         return;
     }
     
-    let html = `<table style="width:100%"><thead>
-        <th style="width:40px"><input type="checkbox" id="selectAllCheck"></th>
-        <th>SAC</th><th>Seri No</th><th>Sıra No</th><th>Grup</th>
-        <th>Oluşturan</th><th>Kayıt Tarihi</th><th>Durum</th><th>İşlem</th>
-    </td></thead><tbody>`;
+    let html = `<table style="width:100%;">
+        <thead>
+            <tr>
+                <th class="checkbox-col"><input type="checkbox" id="selectAllCheck"></th>
+                <th>SAC</th>
+                <th>Seri No</th>
+                <th>Sıra No</th>
+                <th>Grup</th>
+                <th>Oluşturan</th>
+                <th>Kayıt Tarihi</th>
+                <th>Excel Durumu</th>
+                <th>İşlem</th>
+            </tr>
+        </thead>
+        <tbody>`;
     
     pageData.forEach(item => {
-        const checked = selectedIds.has(item._id) ? 'checked' : '';
+        const isChecked = selectedIds.has(item._id);
         const rowClass = item._excel ? 'excel-aktarilmis' : '';
-        const status = item._excel ? 
+        const statusHtml = item._excel ? 
             '<span class="excel-badge aktarildi">✅ AKTARILDI</span>' : 
             '<span class="excel-badge aktarilmadi">⏳ BEKLİYOR</span>';
-        const icon = item._sac === 'SAC1' ? '🔵' : (item._sac === 'SAC2' ? '🟠' : (item._sac === 'SAC3' ? '🟢' : '🟣'));
+        
+        let sacIcon = "";
+        if (item._sac === 'SAC1') sacIcon = '🔵';
+        else if (item._sac === 'SAC2') sacIcon = '🟠';
+        else if (item._sac === 'SAC3') sacIcon = '🟢';
+        else if (item._sac === 'SAC4') sacIcon = '🟣';
         
         html += `<tr class="${rowClass}">
-            <td><input type="checkbox" class="itemCheck" data-id="${item._id}" ${checked}></td>
-            <td>${icon} ${item._sac}</td>
-            <td>${item["Seri No"] || '-'}</td>
-            <td><strong>${item["Sıra No"] || '-'}</strong></td>
-            <td>${item["Grup"] || '-'}</td>
-            <td>${item["Olusturan"] || '-'}</td>
-            <td>${item["Kayıt Tarihi"] || '-'}</td>
-            <td>${status}</td>
-            <td><button class="btn btn-info btn-sm" onclick="showDetail('${item._id}')" style="padding:4px 8px">📄 Detay</button></td>
+            <td style="text-align:center"><input type="checkbox" class="itemCheck" data-id="${item._id}" ${isChecked ? 'checked' : ''}></td>
+            <td style="text-align:center">${sacIcon} ${item._sac}</td>
+            <td style="text-align:center">${item["Seri No"] || '-'}</td>
+            <td style="text-align:center"><strong>${item["Sıra No"] || '-'}</strong></td>
+            <td style="text-align:center">${item["Grup"] || '-'}</td>
+            <td style="text-align:center">${item["Olusturan"] || '-'}</td>
+            <td style="text-align:center">${item["Kayıt Tarihi"] || '-'}</td>
+            <td style="text-align:center">${statusHtml}</td>
+            <td style="text-align:center">
+                <button class="btn btn-info btn-sm" onclick="showDetail('${item._id}')" style="padding:4px 10px;">📄 Detay</button>
+            </td>
         </tr>`;
     });
     
@@ -289,12 +382,12 @@ function renderTable() {
     
     // Sayfalama
     let pagHtml = "";
-    if (total > 1) {
-        pagHtml += `<button onclick="goPage(1)" ${currentPage === 1 ? 'disabled' : ''}>⏮</button>`;
-        pagHtml += `<button onclick="goPage(${currentPage-1})" ${currentPage === 1 ? 'disabled' : ''}>◀</button>`;
-        pagHtml += `<span style="padding:5px 12px;background:#2196f3;color:white;border-radius:6px">${currentPage}/${total}</span>`;
-        pagHtml += `<button onclick="goPage(${currentPage+1})" ${currentPage === total ? 'disabled' : ''}>▶</button>`;
-        pagHtml += `<button onclick="goPage(${total})" ${currentPage === total ? 'disabled' : ''}>⏭</button>`;
+    if (totalPages > 1) {
+        pagHtml += `<button onclick="goPage(1)" ${currentPage === 1 ? 'disabled' : ''}>⏮ İlk</button>`;
+        pagHtml += `<button onclick="goPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>◀ Önceki</button>`;
+        pagHtml += `<span style="padding:6px 14px;background:#2196f3;color:white;border-radius:6px">${currentPage} / ${totalPages}</span>`;
+        pagHtml += `<button onclick="goPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Sonraki ▶</button>`;
+        pagHtml += `<button onclick="goPage(${totalPages})" ${currentPage === totalPages ? 'disabled' : ''}>Son ⏭</button>`;
     }
     document.getElementById("pagination").innerHTML = pagHtml;
     
@@ -323,37 +416,71 @@ function renderTable() {
 
 function goPage(page) { currentPage = page; renderTable(); }
 
+// ==================== DETAY GÖSTER ====================
 function showDetail(id) {
     const item = displayData.find(x => x._id === id);
     if (!item) return;
-    let totalM = 0, totalKg = 0;
+    
+    let totalMiktar = 0, totalKg = 0;
     (item.Kalemler || []).forEach(k => {
-        totalM += parseFloat(k["Miktar"]) || 0;
+        totalMiktar += parseFloat(k["Miktar"]) || 0;
         totalKg += parseFloat(k["Toplam Kg"]) || 0;
     });
-    alert(`📄 EVRAK DETAYI\n\nSAC: ${item._sac}\nSeri: ${item["Seri No"]}\nSıra: ${item["Sıra No"]}\nGrup: ${item["Grup"]}\nOluşturan: ${item["Olusturan"]}\nTarih: ${item["Kayıt Tarihi"]}\nExcel: ${item._excel ? 'AKTARILDI ✅' : 'BEKLİYOR ⏳'}\n\n📦 Toplam Miktar: ${totalM.toFixed(2)}\n⚖️ Toplam Kg: ${totalKg.toFixed(2)}`);
+    
+    alert(`📄 EVRAK DETAYI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🏭 SAC: ${item._sac}
+📋 Seri No: ${item["Seri No"]}
+🔢 Sıra No: ${item["Sıra No"]}
+📁 Grup: ${item["Grup"]}
+👤 Oluşturan: ${item["Olusturan"]}
+📅 Kayıt Tarihi: ${item["Kayıt Tarihi"]} ${item["Kayıt Saati"] || ''}
+✅ Excel Durumu: ${item._excel ? 'AKTARILDI' : 'BEKLİYOR'}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📦 Toplam Miktar: ${totalMiktar.toFixed(2)}
+⚖️ Toplam Ağırlık: ${totalKg.toFixed(2)} kg`);
 }
 
-// EXCEL'E AKTAR VE KALICI İŞARETLE
+// ==================== EXCEL'E AKTAR VE KALICI İŞARETLE ====================
 async function excelAktarVeIsaretle() {
-    if (selectedIds.size === 0) { showToast("Lütfen evrak seçin!", true); return; }
+    if (selectedIds.size === 0) {
+        showToast("❌ Lütfen aktarılacak evrak seçin!", true);
+        return;
+    }
     
     const selected = displayData.filter(item => selectedIds.has(item._id));
-    if (selected.length === 0) { showToast("Seçili evrak bulunamadı!", true); return; }
+    if (selected.length === 0) {
+        showToast("❌ Seçili evrak bulunamadı!", true);
+        return;
+    }
     
     showToast(`📎 ${selected.length} evrak Excel'e aktarılıyor ve işaretleniyor...`);
     
-    // Excel oluştur
-    let excel = `<html><head><meta charset="UTF-8"><style>th{background:#2c3e50;color:white;padding:8px}</style></head><body>
-        <h2>SAC RAPORU</h2>
-        <p>Tarih: ${new Date().toLocaleString('tr-TR')}</p>
-        <p>Kullanıcı: ${currentUser}</p>
-        <p>Toplam Evrak: ${selected.length}</p>
-        <table border="1"><thead><th>SAC</th><th>Seri</th><th>Sıra</th><th>Grup</th><th>Oluşturan</th><th>Tarih</th><th>Stok Kodu</th><th>Miktar</th><th>Kg</th></tr></thead><tbody>`;
+    // Excel dosyası oluştur
+    let excelHtml = `<!DOCTYPE html>
+    <html>
+    <head><meta charset="UTF-8"><title>SAC Raporu</title>
+    <style>th{background:#2c3e50;color:white;padding:10px}td{padding:8px;border:1px solid #ddd}</style>
+    </head>
+    <body>
+    <h2>📊 SAC ENTEGRE RAPORU</h2>
+    <p><strong>Oluşturan:</strong> ${currentUser}</p>
+    <p><strong>Tarih:</strong> ${new Date().toLocaleString('tr-TR')}</p>
+    <p><strong>Toplam Evrak:</strong> ${selected.length}</p>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>SAC</th><th>Seri No</th><th>Sıra No</th><th>Grup</th>
+                <th>Oluşturan</th><th>Kayıt Tarihi</th>
+                <th>Stok Kodu</th><th>Stok İsmi</th>
+                <th>Miktar</th><th>1 Plaka</th><th>Toplam Kg</th><th>Açıklama</th>
+            </tr>
+        </thead>
+        <tbody>`;
     
     selected.forEach(item => {
         (item.Kalemler || []).forEach(k => {
-            excel += `<tr>
+            excelHtml += `<tr>
                 <td>${item._sac}</td>
                 <td>${item["Seri No"] || ''}</td>
                 <td>${item["Sıra No"] || ''}</td>
@@ -361,24 +488,28 @@ async function excelAktarVeIsaretle() {
                 <td>${item["Olusturan"] || ''}</td>
                 <td>${item["Kayıt Tarihi"] || ''}</td>
                 <td>${k["Stok Kodu"] || ''}</td>
-                <td>${k["Miktar"] || 0}</td>
-                <td>${k["Toplam Kg"] || 0}</td>
+                <td>${k["Stok İsmi"] || ''}</td>
+                <td>${parseFloat(k["Miktar"]) || 0}</td>
+                <td>${parseFloat(k["1 Plaka (kg)"]) || 0}</td>
+                <td>${parseFloat(k["Toplam Kg"]) || 0}</td>
+                <td>${k["Açıklama"] || ''}</td>
             </tr>`;
         });
     });
-    excel += `</tbody>:</body></html>`;
     
-    const blob = new Blob([excel], { type: 'application/vnd.ms-excel' });
+    excelHtml += `</tbody></div></body></html>`;
+    
+    const blob = new Blob([excelHtml], { type: 'application/vnd.ms-excel' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = `SAC_Rapor_${Date.now()}.xls`;
     link.click();
     URL.revokeObjectURL(link.href);
     
-    // FIREBASE'E KALICI İŞARETLE
-    let success = 0;
+    // Firebase'e KALICI işaretle
+    let successCount = 0;
     for (let item of selected) {
-        const db = dbs[item._sacKey];
+        const db = firebaseDBs[item._sacKey];
         if (db) {
             try {
                 await db.ref(`${item._sacKey}Kesim/excelAktarilanlar/${item._id}`).set({
@@ -388,53 +519,68 @@ async function excelAktarVeIsaretle() {
                     siraNo: item["Sıra No"]
                 });
                 item._excel = true;
-                success++;
-            } catch(e) { console.error(e); }
+                successCount++;
+                console.log(`✅ İşaretlendi: ${item._id}`);
+            } catch(e) {
+                console.error("İşaretleme hatası:", e);
+            }
         }
     }
     
-    showToast(`✅ ${success} evrak KALICI olarak işaretlendi!`);
+    showToast(`✅ ${successCount} evrak KALICI olarak işaretlendi!`);
     renderTable();
 }
 
-// İŞARETİ KALDIR (SADECE ADMIN)
+// ==================== İŞARETİ KALDIR (SADECE ADMIN) ====================
 async function isaretKaldir() {
-    if (!isAdmin()) { showToast("Bu işlem sadece Admin!", true); return; }
-    if (selectedIds.size === 0) { showToast("Lütfen evrak seçin!", true); return; }
-    if (!confirm("Seçili evrakların Excel işareti KALICI olarak kaldırılacak. Devam?")) return;
+    if (!isAdmin()) {
+        showToast("⚠️ Bu işlem sadece Admin tarafından yapılabilir!", true);
+        return;
+    }
+    if (selectedIds.size === 0) {
+        showToast("❌ Lütfen işaretini kaldırmak istediğiniz evrakları seçin!", true);
+        return;
+    }
+    if (!confirm("⚠️ Seçili evrakların 'Excel Aktarıldı' işareti KALICI olarak kaldırılacak. Devam etmek istiyor musunuz?")) return;
     
     const selected = displayData.filter(item => selectedIds.has(item._id));
-    let success = 0;
+    let successCount = 0;
     
     for (let item of selected) {
-        const db = dbs[item._sacKey];
+        const db = firebaseDBs[item._sacKey];
         if (db) {
             try {
                 await db.ref(`${item._sacKey}Kesim/excelAktarilanlar/${item._id}`).remove();
                 item._excel = false;
-                success++;
-            } catch(e) { console.error(e); }
+                successCount++;
+            } catch(e) {
+                console.error("İşaret kaldırma hatası:", e);
+            }
         }
     }
     
-    showToast(`⚠️ ${success} evrağın işareti kaldırıldı!`);
+    showToast(`⚠️ ${successCount} evrağın Excel işareti kaldırıldı!`);
     renderTable();
 }
 
-// ÖZET
+// ==================== ÖZET GÖSTER ====================
 function showSummary() {
     const startDate = document.getElementById("ozetBas").value;
     const endDate = document.getElementById("ozetBit").value;
-    if (!startDate || !endDate) { showToast("Tarih seçin!", true); return; }
     
-    const start = new Date(startDate); start.setHours(0,0,0,0);
-    const end = new Date(endDate); end.setHours(23,59,59,999);
+    if (!startDate || !endDate) {
+        showToast("❌ Lütfen başlangıç ve bitiş tarihlerini seçin!", true);
+        return;
+    }
+    
+    const start = new Date(startDate);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(endDate);
+    end.setHours(23, 59, 59, 999);
     
     const filtered = displayData.filter(item => {
-        if (!item["Kayıt Tarihi"]) return false;
-        const parts = item["Kayıt Tarihi"].split('.');
-        if (parts.length !== 3) return false;
-        const itemDate = new Date(parts[2], parts[1]-1, parts[0]);
+        const itemDate = tarihParse(item["Kayıt Tarihi"]);
+        if (!itemDate) return false;
         return itemDate >= start && itemDate <= end;
     });
     
@@ -444,11 +590,11 @@ function showSummary() {
         return;
     }
     
-    let totalM = 0, totalKg = 0, excelCount = 0;
+    let totalMiktar = 0, totalKg = 0, excelCount = 0;
     filtered.forEach(item => {
         if (item._excel) excelCount++;
         (item.Kalemler || []).forEach(k => {
-            totalM += parseFloat(k["Miktar"]) || 0;
+            totalMiktar += parseFloat(k["Miktar"]) || 0;
             totalKg += parseFloat(k["Toplam Kg"]) || 0;
         });
     });
@@ -456,46 +602,48 @@ function showSummary() {
     document.getElementById("ozetAlani").style.display = "block";
     document.getElementById("ozetAlani").innerHTML = `<div class="ozet-container">
         <div class="ozet-item"><div class="ozet-deger">${filtered.length}</div><div>📦 Evrak</div></div>
-        <div class="ozet-item"><div class="ozet-deger">${excelCount}</div><div>✅ Excel</div></div>
+        <div class="ozet-item"><div class="ozet-deger">${excelCount}</div><div>✅ Excel Aktarılan</div></div>
         <div class="ozet-item"><div class="ozet-deger">${filtered.length - excelCount}</div><div>⏳ Bekleyen</div></div>
-        <div class="ozet-item"><div class="ozet-deger">${totalM.toFixed(2)}</div><div>🔢 Miktar</div></div>
-        <div class="ozet-item"><div class="ozet-deger">${totalKg.toFixed(2)} kg</div><div>⚖️ Ağırlık</div></div>
+        <div class="ozet-item"><div class="ozet-deger">${totalMiktar.toFixed(2)}</div><div>🔢 Toplam Miktar</div></div>
+        <div class="ozet-item"><div class="ozet-deger">${totalKg.toFixed(2)} kg</div><div>⚖️ Toplam Ağırlık</div></div>
     </div>`;
 }
 
-// SAC DEĞİŞTİR
+// ==================== SAC DEĞİŞTİR ====================
 function changeSac(sac) {
     activeSac = sac;
-    document.querySelectorAll('.sac-tab').forEach(t => {
-        if (t.dataset.sac === sac) t.classList.add('active');
-        else t.classList.remove('active');
+    document.querySelectorAll('.sac-tab').forEach(tab => {
+        if (tab.dataset.sac === sac) tab.classList.add('active');
+        else tab.classList.remove('active');
     });
     filterData();
 }
 
+// ==================== ROL BİLGİSİ ====================
 function updateRoleUI() {
     const badge = document.getElementById("userRolBadge");
     const btn = document.getElementById("isaretKaldirBtn");
     if (isAdmin()) {
-        badge.innerHTML = '<span class="admin-badge">Admin</span>';
+        badge.innerHTML = '<span class="admin-badge">👑 Admin</span>';
         if (btn) btn.style.display = "inline-block";
     } else {
-        badge.innerHTML = '';
+        badge.innerHTML = '<span style="background:#e3f2fd;color:#1565c0;padding:3px 12px;border-radius:20px;font-size:11px">👤 Kullanıcı</span>';
         if (btn) btn.style.display = "none";
     }
 }
 
-// EVENTLER
+// ==================== EVENT LISTENER'LAR ====================
 document.getElementById("loginBtn").onclick = () => {
     const user = document.getElementById("loginUsername").value.trim();
     const pass = document.getElementById("loginPassword").value.trim();
-    if (users[user] && users[user] === pass) {
+    
+    if (USERS[user] && USERS[user] === pass) {
         currentUser = user;
         document.getElementById("loginPage").style.display = "none";
         document.getElementById("mainPage").style.display = "block";
         document.getElementById("currentUser").innerHTML = user;
         updateRoleUI();
-        initDBs();
+        initFirebase();
         loadAllData();
     } else {
         document.getElementById("loginError").style.display = "block";
@@ -509,6 +657,10 @@ document.getElementById("logoutBtn").onclick = () => {
     selectedIds.clear();
 };
 
+document.getElementById("refreshBtn").onclick = () => {
+    loadAllData();
+};
+
 document.getElementById("filtreUygulaBtn").onclick = () => filterData();
 document.getElementById("filtreTemizleBtn").onclick = () => {
     document.getElementById("filtre_seri").value = "";
@@ -518,6 +670,7 @@ document.getElementById("filtreTemizleBtn").onclick = () => {
     document.getElementById("filtre_excel").checked = false;
     filterData();
 };
+
 document.getElementById("excelAktarBtn").onclick = () => excelAktarVeIsaretle();
 document.getElementById("isaretKaldirBtn").onclick = () => isaretKaldir();
 document.getElementById("tumunuSecBtn").onclick = () => {
@@ -541,7 +694,9 @@ document.getElementById("loginPassword").addEventListener("keypress", (e) => {
 window.goPage = goPage;
 window.showDetail = showDetail;
 
-console.log("✅ SİSTEM HAZIR - Excel işaretleri KALICI!");
+console.log("✅ SAC ENTEGRE SİSTEMİ HAZIR!");
+console.log("📌 Excel aktarılan evraklar KALICI olarak işaretlenir!");
+console.log("📌 Sayfa yenilense, yeni kayıt eklense bile işaretler KALICI!");
 </script>
 </body>
 </html>
