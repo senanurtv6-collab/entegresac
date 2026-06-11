@@ -165,7 +165,7 @@ function showToast(msg, isErr = false) {
     t.style.backgroundColor = isErr ? '#e74c3c' : '#27ae60';
     t.textContent = msg;
     document.body.appendChild(t);
-    setTimeout(() => t.remove(), 1000);
+    setTimeout(() => t.remove(), 5000);
 }
 
 // TÜM VERİLERİ YÜKLE
@@ -484,7 +484,7 @@ function startAutoRefresh() {
     refreshInterval = setInterval(() => {
         console.log("🔄 Otomatik yenileme çalışıyor...");
         loadAllData();
-    }, 1000); // 30 saniyede bir
+    }, 5000); // 30 saniyede bir
 }
 
 // EVENTLER
